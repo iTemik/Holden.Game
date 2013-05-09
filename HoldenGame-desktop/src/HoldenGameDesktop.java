@@ -8,9 +8,8 @@ public class HoldenGameDesktop {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		new LwjglApplication(new GameHolden(), "Star Assault", 480, 320, true);
+	public static void main(String[] args) {		
+		new LwjglApplication(new GameHolden(), "Holden Game", 480, 320, true);
 	}
 
 }

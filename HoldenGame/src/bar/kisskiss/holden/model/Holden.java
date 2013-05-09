@@ -8,16 +8,29 @@ public class Holden {
 	public enum State {
 		IDLE, WALKING, DOING_SOMETHING
 	}
+	public enum Facing {
+		TOP_LEFT,		TOP,		TOP_RIGHT,
+		LEFT,			CENTER,		RIGHT,
+		BOTTOM_LEFT, 	BOTTOM, 	BOTTOM_RIGHT  
+	}
 
-	static final float SPEED = 20f; // unit per second	
-	static final float SIZE = 5f;  // 10 units = 1 meter.
+	public static final float SPEED = 20f; // unit per second	
+	public static final float SIZE = 5f;  // 10 units = 1 meter.
 
 	Vector2 position = new Vector2();
 	Vector2 acceleration = new Vector2();
 	Vector2 velocity = new Vector2();
 	Rectangle bounds = new Rectangle();
 	State state = State.IDLE;
-	Vector2 facing = new Vector2();
+	Facing facing = Facing.LEFT;
+	
+	public Facing getFacing() {
+		return facing;
+	}
+
+	public void setFacing(Facing facing) {
+		this.facing = facing;
+	}
 
 	public Holden(Vector2 position) {
 		this.position = position;
@@ -65,11 +78,9 @@ public class Holden {
 		this.state = state;
 	}
 
-	public Vector2 getFacing() {
-		return facing;
+	public void update(float delta) {		
+		//position.add(velocity.tmp().mul(delta));
+		position.add(velocity.scl(delta));
 	}
 
-	public void setFacing(Vector2 facing) {
-		this.facing = facing;
-	}
 }
