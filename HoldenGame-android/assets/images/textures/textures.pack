@@ -1,0 +1,124 @@
+
+textures.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+block
+  rotate: false
+  xy: 1, 127
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+holden-13
+  rotate: false
+  xy: 1, 82
+  size: 28, 43
+  orig: 28, 43
+  offset: 0, 0
+  index: -1
+holden-04
+  rotate: false
+  xy: 131, 214
+  size: 29, 41
+  orig: 29, 41
+  offset: 0, 0
+  index: -1
+holden-12
+  rotate: false
+  xy: 1, 39
+  size: 28, 41
+  orig: 28, 41
+  offset: 0, 0
+  index: -1
+holden-10
+  rotate: false
+  xy: 1, 1
+  size: 28, 36
+  orig: 28, 36
+  offset: 0, 0
+  index: -1
+holden-05
+  rotate: false
+  xy: 31, 84
+  size: 27, 41
+  orig: 27, 41
+  offset: 0, 0
+  index: -1
+holden-11
+  rotate: false
+  xy: 131, 174
+  size: 29, 38
+  orig: 29, 38
+  offset: 0, 0
+  index: -1
+holden-14
+  rotate: false
+  xy: 162, 217
+  size: 28, 38
+  orig: 28, 38
+  offset: 0, 0
+  index: -1
+holden-03
+  rotate: false
+  xy: 31, 46
+  size: 27, 36
+  orig: 27, 36
+  offset: 0, 0
+  index: -1
+holden-02
+  rotate: false
+  xy: 60, 94
+  size: 30, 31
+  orig: 30, 31
+  offset: 0, 0
+  index: -1
+holden-15
+  rotate: false
+  xy: 131, 140
+  size: 29, 32
+  orig: 29, 32
+  offset: 0, 0
+  index: -1
+holden-06
+  rotate: false
+  xy: 162, 183
+  size: 26, 32
+  orig: 26, 32
+  offset: 0, 0
+  index: -1
+holden-01
+  rotate: false
+  xy: 192, 227
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
+holden-09
+  rotate: false
+  xy: 60, 65
+  size: 29, 27
+  orig: 29, 27
+  offset: 0, 0
+  index: -1
+holden-07
+  rotate: false
+  xy: 31, 16
+  size: 27, 28
+  orig: 27, 28
+  offset: 0, 0
+  index: -1
+holden-00
+  rotate: false
+  xy: 92, 102
+  size: 30, 23
+  orig: 30, 23
+  offset: 0, 0
+  index: -1
+holden-08
+  rotate: false
+  xy: 222, 233
+  size: 29, 22
+  orig: 29, 22
+  offset: 0, 0
+  index: -1
