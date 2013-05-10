@@ -28,10 +28,10 @@ public class World {
 	private void createDemoWorld() {
 		holden = new Holden(new Vector2(75, 25));
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 1; i < 10; i++) {
 			blocks.add(new Block(new Vector2(i*10, 0)));
 			blocks.add(new Block(new Vector2(i*10, 60)));
-			if (i > 2)
+			if ((i > 2) && (i < 8))
 				blocks.add(new Block(new Vector2(i*10, 10)));
 		}
 		blocks.add(new Block(new Vector2(90, 20)));

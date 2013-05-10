@@ -23,6 +23,9 @@ public class Holden {
 	Rectangle bounds = new Rectangle();
 	State state = State.IDLE;
 	Facing facing = Facing.LEFT;
+
+	float stateTime = 0;
+
 	
 	public Facing getFacing() {
 		return facing;
@@ -80,7 +83,16 @@ public class Holden {
 
 	public void update(float delta) {		
 		//position.add(velocity.tmp().mul(delta));
+		stateTime += delta;
 		position.add(velocity.scl(delta));
+	}
+
+	public float getStateTime() {
+		return stateTime;
+	}
+
+	public void setStateTime(float stateTime) {
+		this.stateTime = stateTime;
 	}
 
 }

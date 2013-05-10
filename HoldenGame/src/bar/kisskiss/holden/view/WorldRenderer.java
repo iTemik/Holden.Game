@@ -2,6 +2,7 @@ package bar.kisskiss.holden.view;
 
 import bar.kisskiss.holden.model.Block;
 import bar.kisskiss.holden.model.Holden;
+import bar.kisskiss.holden.model.Holden.State;
 import bar.kisskiss.holden.model.World;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -10,7 +11,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 //import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,12 +28,21 @@ public class WorldRenderer {
 	private World world;
 	private OrthographicCamera cam;
 
+	private static final float WALKING_FRAME_DURATION = 0.053f;
+
 	/** for debug rendering **/
 	ShapeRenderer debugRenderer = new ShapeRenderer();
 
-	private Texture holdenTexture;
-	private Texture blockTexture;
+	//private Texture holdenTexture;
+	
+	private TextureRegion holdenIdle;
+	private TextureRegion blockTexture;
+	private TextureRegion holdenFrame;
+	
+	/** Animations **/
+    private Animation walkAnimation;
 
+    
 	private SpriteBatch spriteBatch;
 	private boolean debug = false;
 	private int width;
@@ -54,8 +68,16 @@ public class WorldRenderer {
 	}
 
 	private void loadTextures() {
-		holdenTexture = new Texture(Gdx.files.internal("images/holden_01.png"));
-		blockTexture = new Texture(Gdx.files.internal("images/block.png"));
+		
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
+		holdenIdle = atlas.findRegion("holden-00");
+
+		blockTexture = atlas.findRegion("block");
+		TextureRegion[] walkFrames = new TextureRegion[16];
+		for (int i = 0; i < walkFrames.length; i++) {			
+			walkFrames[i] = atlas.findRegion("holden-" +(i/10)+""+(i%10));
+		}
+		walkAnimation = new Animation(WALKING_FRAME_DURATION, walkFrames);
 	}
 
 	public void render() {
@@ -77,9 +99,51 @@ public class WorldRenderer {
 
 	private void drawHolden() {
 		Holden holden = world.getHolden();
-		spriteBatch.draw(holdenTexture, holden.getPosition().x * ppuX,
-				holden.getPosition().y * ppuY, Holden.SIZE * ppuX, Holden.SIZE
-						* ppuY);
+		holdenFrame = holdenIdle;
+		
+		// AK TODO: rotate sprite;
+		
+		if(holden.getState().equals(State.WALKING)) {
+			holdenFrame = walkAnimation.getKeyFrame(holden.getStateTime(), true);
+		}
+		Sprite sprite = new Sprite(holdenFrame);
+		switch(holden.getFacing())
+		{
+		case TOP_LEFT:
+			sprite.rotate(45);
+			break;
+		case TOP_RIGHT:
+			sprite.rotate(-45);
+			break;
+		case LEFT:
+			sprite.rotate(90);
+			break;			
+
+		case RIGHT:
+			sprite.rotate(270);
+			break;
+		
+		case BOTTOM_LEFT:
+			sprite.rotate(180-45);
+			break;	
+		case BOTTOM:
+			sprite.rotate(180);
+			break; 	
+		case BOTTOM_RIGHT:
+			sprite.rotate(180+45);
+			break;
+		case CENTER:
+		case TOP:
+		default:
+			
+		}
+		
+//		spriteBatch.draw(sprite, holden.getPosition().x * ppuX,
+//				holden.getPosition().y * ppuY, Holden.SIZE * ppuX, Holden.SIZE
+//						* ppuY);
+		sprite.setX(holden.getPosition().x * ppuX);
+		sprite.setY(holden.getPosition().y * ppuY);
+		sprite.draw(spriteBatch);
 	}
 
 	private void drawDebug() {
