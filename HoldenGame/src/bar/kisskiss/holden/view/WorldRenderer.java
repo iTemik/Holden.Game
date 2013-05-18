@@ -1,6 +1,7 @@
 package bar.kisskiss.holden.view;
 
 import bar.kisskiss.holden.model.Block;
+import bar.kisskiss.holden.model.Friend;
 import bar.kisskiss.holden.model.Holden;
 import bar.kisskiss.holden.model.Holden.State;
 import bar.kisskiss.holden.model.World;
@@ -8,7 +9,6 @@ import bar.kisskiss.holden.model.World;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 //import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -37,11 +37,12 @@ public class WorldRenderer {
 	
 	private TextureRegion holdenIdle;
 	private TextureRegion blockTexture;
-	private TextureRegion holdenFrame;
+	private TextureRegion holdenFrame;	
+	private TextureRegion friendFrame;
 	
 	/** Animations **/
     private Animation walkAnimation;
-
+    private Animation friendAnimation;
     
 	private SpriteBatch spriteBatch;
 	private boolean debug = false;
@@ -78,12 +79,19 @@ public class WorldRenderer {
 			walkFrames[i] = atlas.findRegion("holden-" +(i/10)+""+(i%10));
 		}
 		walkAnimation = new Animation(WALKING_FRAME_DURATION, walkFrames);
+		
+		TextureRegion[] friendFrames = new TextureRegion[4];		
+		for (int i = 0; i < friendFrames.length; i++) {	
+			friendFrames[i] = atlas.findRegion("friend-" +(i/10)+""+(i%10));
+		}
+		friendAnimation = new Animation(0.1f, friendFrames);
 	}
 
 	public void render() {
 		spriteBatch.begin();		
 		drawHolden();
 		drawBlocks();
+		drawFriend();
 		spriteBatch.end();
 		if (debug)
 			drawDebug();
@@ -145,7 +153,16 @@ public class WorldRenderer {
 		sprite.setY(holden.getPosition().y * ppuY);
 		sprite.draw(spriteBatch);
 	}
-
+	
+	private void drawFriend() {
+		Friend friend = world.getFriend();
+		friendFrame = friendAnimation.getKeyFrame(friend.getStateTime(), true);
+				
+		spriteBatch.draw(friendFrame, friend.getPosition().x * ppuX,
+				friend.getPosition().y * ppuY, friend.getBounds().width * ppuX,
+				friend.getBounds().height * ppuY);
+	}
+		
 	private void drawDebug() {
 		// render blocks
 		debugRenderer.setProjectionMatrix(cam.combined);
