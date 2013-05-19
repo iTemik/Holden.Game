@@ -4,6 +4,7 @@ import bar.kisskiss.holden.model.Block;
 import bar.kisskiss.holden.model.Friend;
 import bar.kisskiss.holden.model.Holden;
 import bar.kisskiss.holden.model.Holden.State;
+import bar.kisskiss.holden.model.Target;
 import bar.kisskiss.holden.model.World;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.Color;
 //import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class WorldRenderer {
 
@@ -39,6 +42,8 @@ public class WorldRenderer {
 	private TextureRegion blockTexture;
 	private TextureRegion holdenFrame;	
 	private TextureRegion friendFrame;
+	
+	private BitmapFont font;
 	
 	/** Animations **/
     private Animation walkAnimation;
@@ -66,6 +71,35 @@ public class WorldRenderer {
 		this.debug = debug;
 		spriteBatch = new SpriteBatch();
 		loadTextures();
+		
+	}
+
+	public OrthographicCamera getCam() {
+		return cam;
+	}
+
+	public void setCam(OrthographicCamera cam) {
+		this.cam = cam;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public static float getCameraWidth() {
+		return CAMERA_WIDTH;
 	}
 
 	private void loadTextures() {
@@ -85,6 +119,7 @@ public class WorldRenderer {
 			friendFrames[i] = atlas.findRegion("friend-" +(i/10)+""+(i%10));
 		}
 		friendAnimation = new Animation(0.1f, friendFrames);
+		 font = new BitmapFont();
 	}
 
 	public void render() {
@@ -96,6 +131,18 @@ public class WorldRenderer {
 		if (debug)
 			drawDebug();
 	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	public boolean getDebug() {
+		return debug;
+	}
+	
 
 	private void drawBlocks() {
 		for (Block block : world.getBlocks()) {
@@ -115,36 +162,37 @@ public class WorldRenderer {
 			holdenFrame = walkAnimation.getKeyFrame(holden.getStateTime(), true);
 		}
 		Sprite sprite = new Sprite(holdenFrame);
-		switch(holden.getFacing())
-		{
-		case TOP_LEFT:
-			sprite.rotate(45);
-			break;
-		case TOP_RIGHT:
-			sprite.rotate(-45);
-			break;
-		case LEFT:
-			sprite.rotate(90);
-			break;			
-
-		case RIGHT:
-			sprite.rotate(270);
-			break;
-		
-		case BOTTOM_LEFT:
-			sprite.rotate(180-45);
-			break;	
-		case BOTTOM:
-			sprite.rotate(180);
-			break; 	
-		case BOTTOM_RIGHT:
-			sprite.rotate(180+45);
-			break;
-		case CENTER:
-		case TOP:
-		default:
-			
-		}
+		sprite.rotate(world.getHolden().getFacing().angle()-90); 
+//		switch(holden.getFacing())
+//		{
+//		case TOP_LEFT:
+//			sprite.rotate(45);
+//			break;
+//		case TOP_RIGHT:
+//			sprite.rotate(-45);
+//			break;
+//		case LEFT:
+//			sprite.rotate(90);
+//			break;			
+//
+//		case RIGHT:
+//			sprite.rotate(270);
+//			break;
+//		
+//		case BOTTOM_LEFT:
+//			sprite.rotate(180-45);
+//			break;	
+//		case BOTTOM:
+//			sprite.rotate(180);
+//			break; 	
+//		case BOTTOM_RIGHT:
+//			sprite.rotate(180+45);
+//			break;
+//		case CENTER:
+//		case TOP:
+//		default:
+//			
+//		}
 		
 //		spriteBatch.draw(sprite, holden.getPosition().x * ppuX,
 //				holden.getPosition().y * ppuY, Holden.SIZE * ppuX, Holden.SIZE
@@ -152,6 +200,10 @@ public class WorldRenderer {
 		sprite.setX(holden.getPosition().x * ppuX);
 		sprite.setY(holden.getPosition().y * ppuY);
 		sprite.draw(spriteBatch);
+		if(debug) {
+			font.draw(spriteBatch, String.format("target  x: %.2f   y: %.2f",
+					world.getTarget().getPosition().x, world.getTarget().getPosition().y), 20, 30);
+		}
 	}
 	
 	private void drawFriend() {
@@ -161,6 +213,9 @@ public class WorldRenderer {
 		spriteBatch.draw(friendFrame, friend.getPosition().x * ppuX,
 				friend.getPosition().y * ppuY, friend.getBounds().width * ppuX,
 				friend.getBounds().height * ppuY);
+		
+//		font.draw(spriteBatch, String.format("accel friend x: %.2f   y: %.2f",
+//				friend.getAcceleration().x, friend.getAcceleration().y), 20, 20);
 	}
 		
 	private void drawDebug() {
@@ -175,20 +230,33 @@ public class WorldRenderer {
 			debugRenderer.rect(x1, y1, rect.width, rect.height);
 		}
 		// render holden
-		Holden holden = world.getHolden();
-		Rectangle rect = holden.getBounds();
-		float x1 = holden.getPosition().x + rect.x;
-		float y1 = holden.getPosition().y + rect.y;
-		debugRenderer.setColor(new Color(0, 1, 0, 1));
-		debugRenderer.rect(x1, y1, rect.width, rect.height);
+		{
+			Holden holden = world.getHolden();
+			Rectangle rect = holden.getBounds();
+			float x1 = holden.getPosition().x + rect.x;
+			float y1 = holden.getPosition().y + rect.y;
+			debugRenderer.setColor(new Color(0, 1, 0, 1));
+			debugRenderer.rect(x1, y1, rect.width, rect.height);
+		}
+		//render friend
+		{
+			Friend friend = world.getFriend();
+			Rectangle rect = friend.getBounds();
+			float x1 = friend.getPosition().x + rect.x;
+			float y1 = friend.getPosition().y + rect.y;
+			debugRenderer.setColor(new Color(0, 0, 1, 1));
+			debugRenderer.rect(x1, y1, rect.width, rect.height);
+		}
+		{
+			Target target = world.getTarget();
+			Rectangle rect = target.getBounds();
+			float x1 = target.getPosition().x + rect.x;
+			float y1 = target.getPosition().y + rect.y;
+			debugRenderer.setColor(new Color(1, 1, 0, 1));
+			debugRenderer.rect(x1, y1, rect.width, rect.height);
+		}
 		
-//		if (Gdx.app.getType().equals(ApplicationType.Android)) {
-//			debugRenderer.setColor(new Color(0, 0, 1, 1));
-//			debugRenderer.rect(0, 0, width*ppuY, height/4*ppuY);
-//			debugRenderer.rect(0, height * 3/4*ppuY, width*ppuY, height/4*ppuY);
-//			debugRenderer.rect(0, 0, width/4*ppuY, height*ppuY);
-//			debugRenderer.rect(width * 3/4*ppuY, 0, width/4*ppuY, height*ppuY);
-//		}
+		
 		debugRenderer.end();
 	}
 

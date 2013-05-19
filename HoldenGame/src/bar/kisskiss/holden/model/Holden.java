@@ -7,31 +7,19 @@ public class Holden extends MovingObject {
 	public enum State {
 		IDLE, WALKING, DOING_SOMETHING
 	}
-	public enum Facing {
-		TOP_LEFT,		TOP,		TOP_RIGHT,
-		LEFT,			CENTER,		RIGHT,
-		BOTTOM_LEFT, 	BOTTOM, 	BOTTOM_RIGHT  
-	}
-
 	public static final float SPEED = 20f; // unit per second	
 	//public static final float SIZE = 5f;  // 10 units = 1 meter.
 
 	State state = State.IDLE;
-	Facing facing = Facing.LEFT;
+	
 
 	float stateTime = 0;
 
+	Vector2 facing;
 	
-	public Facing getFacing() {
-		return facing;
-	}
-
-	public void setFacing(Facing facing) {
-		this.facing = facing;
-	}
-
 	public Holden(Vector2 position, float size) {
 		super(position, size);
+		
 //		this.position = position;
 //		this.bounds.height = size;
 //		this.bounds.width = size;
@@ -47,7 +35,15 @@ public class Holden extends MovingObject {
 
 	public void update(float delta) {		
 		stateTime += delta;
-		position.add(velocity.scl(delta));
+		position.add(velocity.scl(delta));		
+	}
+
+	public Vector2 getFacing() {
+		return facing;
+	}
+
+	public void setFacing(Vector2 facing) {
+		this.facing = facing;
 	}
 
 	public float getStateTime() {
