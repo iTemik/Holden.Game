@@ -152,6 +152,7 @@ public class HoldenController {
 		holdenRect.y += holden.getVelocity().y;
 		world.getCollisionRects().clear();
 
+		boolean stop = false;
 		for (InteractObject interactObject : collidable) {
 			if (interactObject == null)
 				continue;
@@ -165,11 +166,12 @@ public class HoldenController {
 					holden.getVelocity().x = 0;
 					holden.getVelocity().y = 0;
 					target.setReached(true);
+					stop=true;
 				}
 				// break;
 			}
 		}
-		if (collidable.size == 0) {
+		if (!stop) {
 			holden.getPosition().add(holden.getVelocity());
 			holden.getBounds().x = holden.getPosition().x;
 			holden.getBounds().y = holden.getPosition().y;

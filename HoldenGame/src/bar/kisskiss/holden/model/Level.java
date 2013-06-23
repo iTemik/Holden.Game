@@ -88,7 +88,7 @@ public class Level {
 		}
 		
 		{
-			AccelerationPad object = new AccelerationPad(new Rectangle(15,15,7,7), new Vector2(-1, -1).scl(50));
+			AccelerationPad object = new AccelerationPad(new Rectangle(15,15,7,7), new Vector2(1, 0).scl(50));
 			object.setAnimation(WorldRenderer.createAnimationFromAtlas(atlas, "accelerator-", 4, 0.12f));			
 			interactObjects.add(object);
 		}

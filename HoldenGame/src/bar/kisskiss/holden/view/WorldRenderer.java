@@ -68,6 +68,25 @@ public class WorldRenderer {
 	private float ppuX; // pixels per unit on the X axis
 	private float ppuY; // pixels per unit on the Y axis
 
+	private float camShiftX = CAMERA_WIDTH/2;
+	private float camShiftY = CAMERA_HEIGHT/2;
+	
+	public float getCamShiftX() {
+		return camShiftX;
+	}
+
+	public void setCamShiftX(float camShiftX) {
+		this.camShiftX = camShiftX;
+	}
+
+	public float getCamShiftY() {
+		return camShiftY;
+	}
+
+	public void setCamShiftY(float camShiftY) {
+		this.camShiftY = camShiftY;
+	}
+
 	public void setSize(int w, int h) {
 		this.width = w;
 		this.height = h;
@@ -278,6 +297,15 @@ public class WorldRenderer {
 		}
 
 		debugRenderer.end();
+	}
+
+	public void updateCam() {
+		// TODO Auto-generated method stub
+		cam.position.x = camShiftX + CAMERA_WIDTH/2;
+		cam.position.y = camShiftY + CAMERA_HEIGHT/2;
+		cam.update();
+		world.setDrawableArea(new Rectangle(cam.position.x - CAMERA_WIDTH / 2,
+				cam.position.y - CAMERA_HEIGHT / 2, CAMERA_WIDTH, CAMERA_HEIGHT));
 	}
 
 }

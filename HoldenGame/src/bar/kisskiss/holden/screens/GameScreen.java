@@ -130,7 +130,11 @@ public class GameScreen implements Screen, InputProcessor {
 		float x = screenX * renderer.getCam().viewportWidth/width;
 		float y = (height - screenY) * renderer.getCam().viewportHeight/height;
 		world.getTarget().setPosition(new Vector2(x, y));
-
+//		renderer.setCamShiftX(x);
+//		renderer.setCamShiftY(y);
+//		renderer.updateCam();
+		
+		
 		return true;
 	}
 
