@@ -3,149 +3,191 @@ textures.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-block
+crate
   rotate: false
-  xy: 1, 127
+  xy: 1, 236
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+tree
+  rotate: false
+  xy: 1, 106
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
+accelerator-00
+  rotate: false
+  xy: 259, 392
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+accelerator-01
+  rotate: false
+  xy: 1, 4
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+accelerator-03
+  rotate: false
+  xy: 1, 4
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+accelerator-02
+  rotate: false
+  xy: 131, 134
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+accelerator-04
+  rotate: false
+  xy: 259, 290
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
 friend-00
   rotate: false
-  xy: 1, 75
+  xy: 361, 442
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 friend-01
   rotate: false
-  xy: 131, 205
+  xy: 259, 238
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 friend-03
   rotate: false
-  xy: 131, 205
+  xy: 259, 238
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 friend-02
   rotate: false
-  xy: 1, 23
+  xy: 361, 390
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 holden-13
   rotate: false
-  xy: 53, 82
+  xy: 413, 449
   size: 28, 43
   orig: 28, 43
   offset: 0, 0
   index: -1
 holden-04
   rotate: false
-  xy: 131, 162
+  xy: 311, 247
   size: 29, 41
   orig: 29, 41
   offset: 0, 0
   index: -1
 holden-12
   rotate: false
-  xy: 183, 214
+  xy: 361, 347
   size: 28, 41
   orig: 28, 41
   offset: 0, 0
   index: -1
 holden-05
   rotate: false
-  xy: 53, 39
+  xy: 413, 406
   size: 27, 41
   orig: 27, 41
   offset: 0, 0
   index: -1
-holden-10
-  rotate: false
-  xy: 53, 1
-  size: 28, 36
-  orig: 28, 36
-  offset: 0, 0
-  index: -1
 holden-11
   rotate: false
-  xy: 83, 87
+  xy: 443, 454
   size: 29, 38
   orig: 29, 38
   offset: 0, 0
   index: -1
 holden-14
   rotate: false
-  xy: 213, 217
+  xy: 361, 307
   size: 28, 38
   orig: 28, 38
   offset: 0, 0
   index: -1
-holden-15
+holden-10
   rotate: false
-  xy: 131, 128
-  size: 29, 32
-  orig: 29, 32
+  xy: 474, 456
+  size: 28, 36
+  orig: 28, 36
   offset: 0, 0
   index: -1
 holden-03
   rotate: false
-  xy: 162, 167
+  xy: 103, 68
   size: 27, 36
   orig: 27, 36
   offset: 0, 0
   index: -1
+holden-15
+  rotate: false
+  xy: 103, 34
+  size: 29, 32
+  orig: 29, 32
+  offset: 0, 0
+  index: -1
 holden-02
   rotate: false
-  xy: 162, 134
+  xy: 103, 1
   size: 30, 31
   orig: 30, 31
   offset: 0, 0
   index: -1
 holden-06
   rotate: false
-  xy: 114, 93
+  xy: 233, 202
   size: 26, 32
   orig: 26, 32
   offset: 0, 0
   index: -1
 holden-01
   rotate: false
-  xy: 142, 98
+  xy: 233, 172
   size: 28, 28
   orig: 28, 28
   offset: 0, 0
   index: -1
 holden-07
   rotate: false
-  xy: 172, 104
+  xy: 233, 142
   size: 27, 28
   orig: 27, 28
   offset: 0, 0
   index: -1
 holden-09
   rotate: false
-  xy: 191, 185
+  xy: 261, 209
   size: 29, 27
   orig: 29, 27
   offset: 0, 0
   index: -1
 holden-00
   rotate: false
-  xy: 222, 192
+  xy: 131, 109
   size: 30, 23
   orig: 30, 23
   offset: 0, 0
   index: -1
 holden-08
   rotate: false
-  xy: 222, 168
+  xy: 163, 110
   size: 29, 22
   orig: 29, 22
   offset: 0, 0

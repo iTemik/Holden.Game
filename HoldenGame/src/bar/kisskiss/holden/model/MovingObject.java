@@ -25,7 +25,16 @@ public class MovingObject {
 	}
 	public void setPosition(Vector2 position) {
 		this.position = position;
+		this.bounds.setX(position.x);
+		this.bounds.setY(position.y);
 	}
+	public void setPosition(float x, float y) {
+		this.position.x = x;
+		this.position.y = y;
+		this.bounds.setX(x);
+		this.bounds.setY(y);
+	}
+	
 	public Vector2 getAcceleration() {
 		return acceleration;
 	}
@@ -43,6 +52,7 @@ public class MovingObject {
 	}
 	public void setBounds(Rectangle bounds) {
 		this.bounds = bounds;
+		setPosition(bounds.x, bounds.y);
 	}
 
 	public MovingObject(Vector2 position, float size) {

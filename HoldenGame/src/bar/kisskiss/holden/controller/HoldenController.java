@@ -3,9 +3,13 @@ package bar.kisskiss.holden.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
+import bar.kisskiss.holden.model.AccelerationPad;
 import bar.kisskiss.holden.model.Holden;
+import bar.kisskiss.holden.model.InteractObject;
 import bar.kisskiss.holden.model.Target;
 import bar.kisskiss.holden.model.World;
 import bar.kisskiss.holden.model.Holden.State;
@@ -28,6 +32,8 @@ public class HoldenController {
 	private World world;
 	private Holden holden;
 	private Target target;
+	
+	private Array<InteractObject> collidable = new Array<InteractObject>();
 
 	public HoldenController(World world) {
 		this.world = world;
@@ -88,6 +94,9 @@ public class HoldenController {
 		holden.update(delta);
 		Vector2 v = new Vector2(target.getPosition());
 		holden.setFacing(v.sub(holden.getPosition()));
+		
+		checkCollisionWithBlocks(delta);		
+		
 		if ((Math.abs(holden.getPosition().x - target.getPosition().x) < 3)
 				&& (Math.abs(holden.getPosition().y - target.getPosition().y) < 3)) {
 			target.setReached(true);
@@ -98,8 +107,85 @@ public class HoldenController {
 			holden.setState(State.WALKING);
 			holden.setVelocity(new Vector2(holden.getFacing()).nor().scl(Holden.SPEED));
 		}
+		//holden.getPosition().add(holden.getVelocity().scl(delta));
+		
 	}
 	
+	private void checkCollisionWithBlocks(float delta) {
+		// TODO Auto-generated method stub
+
+		holden.getVelocity().scl(delta);
+
+		// Rectangle friendRect = rectPool.obtain(); // ?????
+		Rectangle holdenRect = new Rectangle();
+
+		holdenRect.set(holden.getBounds().x, holden.getBounds().y,
+				holden.getBounds().width, holden.getBounds().height);
+
+		int startX = (int) holden.getBounds().x;
+		int endX = (int) (holden.getBounds().x + holden.getBounds().width);
+		if (holden.getVelocity().x < 0) {
+			endX = startX;
+			startX = (int) Math.floor(holden.getBounds().x
+					+ holden.getVelocity().x);
+		} else {
+			startX = endX;
+			endX = (int) Math.floor(holden.getBounds().x
+					+ holden.getBounds().width + holden.getVelocity().x);
+		}
+
+		int startY = (int) holden.getBounds().y;
+		int endY = (int) (holden.getBounds().y + holden.getBounds().height);
+		if (holden.getVelocity().y < 0) {
+			endY = startY;
+			startY = (int) Math.floor(holden.getBounds().y
+					+ holden.getVelocity().y);
+		} else {
+			startY = endY;
+			endY = (int) Math.floor(holden.getBounds().y
+					+ holden.getBounds().width + holden.getVelocity().y);
+		}
+
+		// populateCollidableBlocks(startX, startY, endX, endY);
+		populateCollidableBlocks(startX, startY, endX, endY);
+		holdenRect.x += holden.getVelocity().x;
+		holdenRect.y += holden.getVelocity().y;
+		world.getCollisionRects().clear();
+
+		for (InteractObject interactObject : collidable) {
+			if (interactObject == null)
+				continue;
+			if (holdenRect.overlaps(interactObject.getBounds())) {
+				world.getCollisionRects().add(interactObject.getBounds());
+
+				// friend.getVelocity().scl(DAMP);
+				if (interactObject.getState() == InteractObject.State.STOPPER) {
+					holden.getAcceleration().x = 0;
+					holden.getAcceleration().y = 0;
+					holden.getVelocity().x = 0;
+					holden.getVelocity().y = 0;
+					target.setReached(true);
+				}
+				// break;
+			}
+		}
+		if (collidable.size == 0) {
+			holden.getPosition().add(holden.getVelocity());
+			holden.getBounds().x = holden.getPosition().x;
+			holden.getBounds().y = holden.getPosition().y;
+			// friend.getVelocity().scl(1 / delta);
+		}
+	}
+
+	private void populateCollidableBlocks(int startX, int startY, int endX,
+			int endY) {
+		// TODO Auto-generated method stub
+		collidable.clear();
+		world.getLevel().getBlocksInRect(
+				new Rectangle(startX, startY, endX - startX, endY - startY),
+				collidable);
+	}
+
 	private void processInput() {
 
 		if (keys.get(Keys.DOWN)) {

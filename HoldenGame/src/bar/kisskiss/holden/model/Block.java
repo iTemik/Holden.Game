@@ -5,15 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Block {
 
-	public static final float SIZE = 10f;
-
 	Vector2 position = new Vector2();
 	Rectangle bounds = new Rectangle();
 
-	public Block(Vector2 pos) {
+	public Block(Vector2 pos, float size) {
 		this.position = pos;
-		this.bounds.width = SIZE;
-		this.bounds.height = SIZE;
+		this.bounds.width = size;
+		this.bounds.height = size;
+		this.bounds.setX(pos.x);
+		this.bounds.setY(pos.y);
 	}
 
 	public Vector2 getPosition() {

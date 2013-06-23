@@ -10,8 +10,8 @@ public class TextureSetup {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		TexturePacker2.process(
-				"d:/git/Holden.Game/HoldenGame-android/assets/images/",
-				"d:/git/Holden.Game/HoldenGame-android/assets/images/textures/",
+				"../HoldenGame-android/assets/images/",
+				"../HoldenGame-android/assets/images/textures/",
 				"textures.pack");
 	}
 

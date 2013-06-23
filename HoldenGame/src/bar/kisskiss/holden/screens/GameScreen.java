@@ -2,6 +2,7 @@ package bar.kisskiss.holden.screens;
 
 import bar.kisskiss.holden.controller.FriendController;
 import bar.kisskiss.holden.controller.HoldenController;
+import bar.kisskiss.holden.controller.WorldController;
 import bar.kisskiss.holden.model.World;
 import bar.kisskiss.holden.view.WorldRenderer;
 
@@ -19,16 +20,20 @@ public class GameScreen implements Screen, InputProcessor {
 	private WorldRenderer renderer;
 	private FriendController friendController;
 	private HoldenController holdenController;
-
+	private WorldController worldController;
+	
+	
 	private int width, height;
 
 	@Override
 	public void show() {
-		world = new World();
 		
-		renderer = new WorldRenderer(world, true);
+		world = new World();
+		renderer = new WorldRenderer(world, false);		
+
 		friendController = new FriendController(world);
 		holdenController = new HoldenController(world);
+		worldController = new WorldController(world);
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -38,7 +43,8 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
 		holdenController.update(delta);
-		friendController.update(delta);
+		friendController.update(delta);		
+		worldController.update(delta);
 		
 		renderer.render();
 	}
@@ -97,7 +103,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (keycode == Keys.RIGHT)
 			holdenController.rightReleased();
 		if (keycode == Keys.UP)
-			holdenController.upReleased();
+		holdenController.upReleased();
 		if (keycode == Keys.DOWN)
 			holdenController.downReleased();
 		
@@ -120,18 +126,10 @@ public class GameScreen implements Screen, InputProcessor {
 		// if (!Gdx.app.getType().equals(ApplicationType.Android))
 		// return false;
 
-//		if (screenX < width / 4)
-//			controller.leftPressed();
-//		if (screenX > width * 3 / 4)
-//			controller.rightPressed();
-//		if (screenY < height / 4)
-//			controller.upPressed();
-//		if (screenY > height * 3 / 4)
-//			controller.downPressed();
+		// /10 ?
 		float x = screenX * renderer.getCam().viewportWidth/width;
 		float y = (height - screenY) * renderer.getCam().viewportHeight/height;
-		Vector2 pos = new Vector2(x, y);
-		world.getTarget().setPosition(pos);
+		world.getTarget().setPosition(new Vector2(x, y));
 
 		return true;
 	}
@@ -140,15 +138,6 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// if (!Gdx.app.getType().equals(ApplicationType.Android))
 		// return false;
-
-//		if (screenX < width / 4)
-//			controller.leftReleased();
-//		if (screenX > width * 3 / 4)
-//			controller.rightReleased();
-//		if (screenY < height / 4)
-//			controller.upReleased();
-//		if (screenY > height * 3 / 4)
-//			controller.downReleased();
 
 		return true;
 	}

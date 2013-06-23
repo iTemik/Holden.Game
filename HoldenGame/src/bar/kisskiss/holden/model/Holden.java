@@ -35,7 +35,7 @@ public class Holden extends MovingObject {
 
 	public void update(float delta) {		
 		stateTime += delta;
-		position.add(velocity.scl(delta));		
+		//position.add(velocity.scl(delta));		
 	}
 
 	public Vector2 getFacing() {
