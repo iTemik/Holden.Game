@@ -21,10 +21,10 @@ public class InteractObjectAnimation extends InteractObject {
 		stateTime += delta;
 	}
 	
-	public void draw(SpriteBatch sb, float ppuX, float ppuY) {
+	public void draw(SpriteBatch sb, float shiftX, float shiftY, float ppuX, float ppuY) {
 		if(animation != null) {
 			textureRegion = animation.getKeyFrame(getStateTime(), true);
-			super.draw(sb, ppuX, ppuY);
+			super.draw(sb, shiftX, shiftY, ppuX, ppuY);
 		}
 	}
 

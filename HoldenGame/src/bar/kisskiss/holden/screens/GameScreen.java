@@ -126,13 +126,15 @@ public class GameScreen implements Screen, InputProcessor {
 		// if (!Gdx.app.getType().equals(ApplicationType.Android))
 		// return false;
 
-		// /10 ?
-		float x = screenX * renderer.getCam().viewportWidth/width;
-		float y = (height - screenY) * renderer.getCam().viewportHeight/height;
+		float leftConer = renderer.getCamShiftX() - renderer.getCam().viewportWidth/2;
+		float bottomConer = renderer.getCamShiftY() - renderer.getCam().viewportHeight/2;
+		
+		float x = leftConer + screenX * renderer.getCam().viewportWidth/width;
+		float y = bottomConer + (height - screenY) * renderer.getCam().viewportHeight/height;
 		world.getTarget().setPosition(new Vector2(x, y));
-//		renderer.setCamShiftX(x);
-//		renderer.setCamShiftY(y);
-//		renderer.updateCam();
+		renderer.setCamShiftX(x);
+		renderer.setCamShiftY(y);
+		renderer.updateCam();
 		
 		
 		return true;

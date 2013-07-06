@@ -78,7 +78,7 @@ public class World {
 	private void createDemoWorld() {
 		holden = new Holden(new Vector2(55, 25), 5);
 		friend = new Friend(new Vector2(20, 40), 10);
-		target = new Target(new Vector2(35, 25));		
+		target = new Target(new Vector2(50, 35));		
 		level = new Level(1000, 500);	
 
 	}

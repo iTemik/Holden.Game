@@ -37,8 +37,6 @@ public class WorldRenderer {
 
 	/** for debug rendering **/
 	ShapeRenderer debugRenderer = new ShapeRenderer();
-
-	//private Texture holdenTexture;
 	
 	private TextureRegion holdenIdle;
 	private TextureRegion holdenFrame;	
@@ -190,13 +188,24 @@ public class WorldRenderer {
 		drawInteractObjects(spriteBatch);
 		drawHolden();				
 		drawFriend();
-		font.draw(spriteBatch, String
-				.format("target  x: %.2f   y: %.2f", world.getTarget()
-						.getPosition().x, world.getTarget().getPosition().y),
-				20, 30);
+		if (debug) {
+			font.draw(spriteBatch, String.format("target  x: %.2f   y: %.2f",
+					world.getTarget().getPosition().x, world.getTarget()
+							.getPosition().y), 10, 20);
+			font.draw(spriteBatch, String.format("holden  x: %.2f   y: %.2f",
+					world.getHolden().getPosition().x, world.getHolden()
+							.getPosition().y), 10, 32);
+			font.draw(spriteBatch, String.format("drawable  x: %.2f   y: %.2f",
+					world.getDrawableArea().getX(), world.getDrawableArea()
+							.getY()), 10, 44);
+			font.draw(spriteBatch, String.format(
+					"Cam shift  x: %.2f   y: %.2f", getCamShiftX(),
+					getCamShiftY()), 10, 56);
+		}
 		spriteBatch.end();
-		if (debug)
-			drawDebug();
+		if (debug) {
+			drawDebug();			
+		}
 	}
 
 	public boolean isDebug() {
@@ -206,16 +215,15 @@ public class WorldRenderer {
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
+
 	public boolean getDebug() {
 		return debug;
 	}
-	
 
-	
 	private void drawInteractObjects(SpriteBatch sb) {
-		/*AK TODO: Re do?*/
 		for (InteractObject interactObject : world.getDrawableObjects()) {
-			interactObject.draw(sb, ppuX, ppuY);
+			interactObject.draw(sb, camShiftX - CAMERA_WIDTH / 2, camShiftY
+					- CAMERA_HEIGHT / 2, ppuX, ppuY);
 		}
 	}
 
@@ -223,28 +231,35 @@ public class WorldRenderer {
 		Holden holden = world.getHolden();
 		holdenFrame = holdenIdle;
 
-		if(holden.getState().equals(State.WALKING)) {
-			holdenFrame = walkAnimation.getKeyFrame(holden.getStateTime(), true);
+		if (holden.getState().equals(State.WALKING)) {
+			holdenFrame = walkAnimation
+					.getKeyFrame(holden.getStateTime(), true);
 		}
 		Sprite sprite = new Sprite(holdenFrame);
-		sprite.rotate(world.getHolden().getFacing().angle()-90); 
+		sprite.rotate(world.getHolden().getFacing().angle() - 90);
 
-		sprite.setX(holden.getPosition().x * ppuX);
-		sprite.setY(holden.getPosition().y * ppuY);
-		sprite.draw(spriteBatch);		
-		
+		sprite.setX((holden.getPosition().x - camShiftX + CAMERA_WIDTH / 2)
+				* ppuX);
+		sprite.setY((holden.getPosition().y - camShiftY + CAMERA_HEIGHT / 2)
+				* ppuY);
+		sprite.draw(spriteBatch);
+
 	}
-	
+
 	private void drawFriend() {
 		Friend friend = world.getFriend();
 		friendFrame = friendAnimation.getKeyFrame(friend.getStateTime(), true);
-				
-		spriteBatch.draw(friendFrame, friend.getPosition().x * ppuX,
-				friend.getPosition().y * ppuY, friend.getBounds().width * ppuX,
-				friend.getBounds().height * ppuY);
+
+		spriteBatch
+				.draw(friendFrame,
+						(friend.getPosition().x - camShiftX + CAMERA_WIDTH / 2)
+								* ppuX,
+						(friend.getPosition().y - camShiftY + CAMERA_HEIGHT / 2)
+								* ppuY, friend.getBounds().width * ppuX,
+						friend.getBounds().height * ppuY);
 
 	}
-		
+
 	private void drawDebug() {
 		// render collidable
 		debugRenderer.setProjectionMatrix(cam.combined);
@@ -259,41 +274,43 @@ public class WorldRenderer {
 
 		for (InteractObject interactObject : world.getDrawableObjects()) {
 			Rectangle rect = interactObject.getBounds();
-			if(interactObject.getClass() == AccelerationPad.class){
+			if (interactObject.getClass() == AccelerationPad.class) {
 				debugRenderer.setColor(new Color(1, 1, 0, 1));
-			}
-			else {
+			} else {
 				debugRenderer.setColor(new Color(1, 0, 0, 1));
 			}
-			debugRenderer.rect(interactObject.getPosition().x, interactObject.getPosition().y,
-					rect.width, rect.height);
-		}	
-		
+			debugRenderer.rect(interactObject.getPosition().x,
+					interactObject.getPosition().y, rect.width, rect.height);
+		}
+
 		// render holden
 		{
 			Holden holden = world.getHolden();
 			Rectangle rect = holden.getBounds();
-			float x1 = holden.getPosition().x/* + rect.x*/;
-			float y1 = holden.getPosition().y/* + rect.y*/;
 			debugRenderer.setColor(new Color(0, 1, 0, 1));
-			debugRenderer.rect(x1, y1, rect.width, rect.height);
+			debugRenderer.rect(holden.getPosition().x, holden.getPosition().y,
+					rect.width, rect.height);
 		}
-		//render friend
+		// render friend
 		{
 			Friend friend = world.getFriend();
 			Rectangle rect = friend.getBounds();
-			float x1 = friend.getPosition().x/* + rect.x*/;
-			float y1 = friend.getPosition().y/* + rect.y*/;
 			debugRenderer.setColor(new Color(0, 0, 1, 1));
-			debugRenderer.rect(x1, y1, rect.width, rect.height);
+			debugRenderer.rect(friend.getPosition().x, friend.getPosition().y,
+					rect.width, rect.height);
 		}
 		{
 			Target target = world.getTarget();
 			Rectangle rect = target.getBounds();
-			float x1 = /*rect.x + */target.getPosition().x;
-			float y1 = /*rect.y + */target.getPosition().y;
 			debugRenderer.setColor(new Color(1, 1, 0, 1));
-			debugRenderer.rect(x1, y1, rect.width, rect.height);
+			debugRenderer.rect(target.getPosition().x, target.getPosition().y,
+					rect.width, rect.height);
+		}
+
+		{
+			Rectangle rect = world.getDrawableArea();
+			debugRenderer.setColor(new Color(1, 0, 0, 1));
+			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		}
 
 		debugRenderer.end();
@@ -301,11 +318,11 @@ public class WorldRenderer {
 
 	public void updateCam() {
 		// TODO Auto-generated method stub
-		cam.position.x = camShiftX + CAMERA_WIDTH/2;
-		cam.position.y = camShiftY + CAMERA_HEIGHT/2;
-		cam.update();
+		cam.position.x = camShiftX;
+		cam.position.y = camShiftY;
 		world.setDrawableArea(new Rectangle(cam.position.x - CAMERA_WIDTH / 2,
 				cam.position.y - CAMERA_HEIGHT / 2, CAMERA_WIDTH, CAMERA_HEIGHT));
+		cam.update();
 	}
 
 }

@@ -57,12 +57,12 @@ public class InteractObject {
 		this.textureRegion = textureRegion;
 	}
 
-	public void draw(SpriteBatch sb, float ppuX, float ppuY) {
+	public void draw(SpriteBatch sb, float shiftX, float shiftY, float ppuX, float ppuY) {
 		if(sb != null && textureRegion != null) {
 			Sprite sprite = new Sprite(textureRegion);
 			/*AK TODO: check*/
 			sprite.rotate(angle);
-			sprite.setBounds(position.x * ppuX, position.y * ppuY, bounds.width * ppuX, bounds.height * ppuY);
+			sprite.setBounds((position.x - shiftX) * ppuX, (position.y - shiftY )* ppuY, bounds.width * ppuX, bounds.height * ppuY);
 			
 			sprite.draw(sb);
 		}			
