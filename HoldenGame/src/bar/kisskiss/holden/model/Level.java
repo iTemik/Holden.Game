@@ -66,7 +66,7 @@ public class Level {
 		Random rand = new Random();
 		for (int i = 0; i < width/10; i++) {
 			for(int j = 0; j<height/10; j++) {
-				int randomNum = rand.nextInt(10);
+				int randomNum = rand.nextInt(8);
 				
 				if(randomNum<1) {
 					int randomSize = rand.nextInt(6)+5;
@@ -84,14 +84,19 @@ public class Level {
 					interactObjects.add(object);
 				}
 				
+				if( i%5==0 && j%5==0){
+					Vector2 force = new Vector2(1,1);					
+					force.setAngle(360/8*(randomNum+1));
+					force.nor().scl(200);
+					AccelerationPad object = new AccelerationPad(new Rectangle(15+i*10,15+j*10,8,8), force);
+					object.setAnimation(WorldRenderer.createAnimationFromAtlas(atlas, "accelerator-", 4, 0.12f));			
+					interactObjects.add(object);
+				}
+				
 			}						
 		}
 		
-		{
-			AccelerationPad object = new AccelerationPad(new Rectangle(15,15,7,7), new Vector2(1, 0).scl(50));
-			object.setAnimation(WorldRenderer.createAnimationFromAtlas(atlas, "accelerator-", 4, 0.12f));			
-			interactObjects.add(object);
-		}
+
 		
 	}
 }

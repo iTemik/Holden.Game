@@ -24,7 +24,9 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	
 	private int width, height;
-
+	private int lastTouchedX = 0;
+	private int lastTouchedY = 0;
+	
 	@Override
 	public void show() {
 		
@@ -35,6 +37,8 @@ public class GameScreen implements Screen, InputProcessor {
 		holdenController = new HoldenController(world);
 		worldController = new WorldController(world);
 		Gdx.input.setInputProcessor(this);
+		
+		
 	}
 
 	@Override
@@ -126,16 +130,18 @@ public class GameScreen implements Screen, InputProcessor {
 		// if (!Gdx.app.getType().equals(ApplicationType.Android))
 		// return false;
 
-		float leftConer = renderer.getCamShiftX() - renderer.getCam().viewportWidth/2;
-		float bottomConer = renderer.getCamShiftY() - renderer.getCam().viewportHeight/2;
+//		float leftConer = renderer.getCamShiftX() - renderer.getCam().viewportWidth/2;
+//		float bottomConer = renderer.getCamShiftY() - renderer.getCam().viewportHeight/2;
+//		
+//		float x = leftConer + screenX * renderer.getCam().viewportWidth/width;
+//		float y = bottomConer + (height - screenY) * renderer.getCam().viewportHeight/height;
+		//world.getTarget().setPosition(new Vector2(x, y));
+//		renderer.setCamShiftX(x);
+//		renderer.setCamShiftY(y);
+//		renderer.updateCam();
 		
-		float x = leftConer + screenX * renderer.getCam().viewportWidth/width;
-		float y = bottomConer + (height - screenY) * renderer.getCam().viewportHeight/height;
-		world.getTarget().setPosition(new Vector2(x, y));
-		renderer.setCamShiftX(x);
-		renderer.setCamShiftY(y);
-		renderer.updateCam();
-		
+		lastTouchedX = screenX;
+		lastTouchedY = screenY;		
 		
 		return true;
 	}
@@ -151,7 +157,21 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		// TODO Auto-generated method stub
-		return false;
+		
+		float leftConer = renderer.getCamShiftX() - renderer.getCam().viewportWidth/2;
+		float bottomConer = renderer.getCamShiftY() - renderer.getCam().viewportHeight/2;
+		
+		float x = leftConer + (screenX-lastTouchedX + width/2) * renderer.getCam().viewportWidth/width;
+		float y = bottomConer + (height/2 - screenY + lastTouchedY) * renderer.getCam().viewportHeight/height;
+
+		renderer.setCamShiftX(x);
+		renderer.setCamShiftY(y);
+		renderer.updateCam();
+		
+		lastTouchedX = screenX;
+		lastTouchedY = screenY;
+		
+		return true;
 	}
 
 	@Override
