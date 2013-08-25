@@ -9,7 +9,7 @@ public class HoldenGameDesktop {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		new LwjglApplication(new GameHolden(), "Holden Game", 480, 320, true);
+		new LwjglApplication(new GameHolden(), "Holden Game", 1024, 768, true);
 	}
 
 }

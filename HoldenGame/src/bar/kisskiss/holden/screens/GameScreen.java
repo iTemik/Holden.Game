@@ -1,5 +1,6 @@
 package bar.kisskiss.holden.screens;
 
+import bar.kisskiss.holden.controller.CameraController;
 import bar.kisskiss.holden.controller.FriendController;
 import bar.kisskiss.holden.controller.HoldenController;
 import bar.kisskiss.holden.controller.WorldController;
@@ -21,9 +22,9 @@ public class GameScreen implements Screen, InputProcessor {
 	private FriendController friendController;
 	private HoldenController holdenController;
 	private WorldController worldController;
-	
-	
-	private int width, height;
+	private CameraController cameraController;
+
+
 	private int lastTouchedX = 0;
 	private int lastTouchedY = 0;
 	
@@ -31,13 +32,14 @@ public class GameScreen implements Screen, InputProcessor {
 	public void show() {
 		
 		world = new World();
+		
 		renderer = new WorldRenderer(world, false);		
 
 		friendController = new FriendController(world);
 		holdenController = new HoldenController(world);
 		worldController = new WorldController(world);
+		cameraController = new CameraController(world.getCamera());
 		Gdx.input.setInputProcessor(this);
-		
 		
 	}
 
@@ -46,9 +48,11 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+		
 		holdenController.update(delta);
 		friendController.update(delta);		
 		worldController.update(delta);
+		cameraController.update(delta);
 		
 		renderer.render();
 	}
@@ -57,8 +61,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public void resize(int width, int height) {
 		renderer.setSize(width, height);
 		renderer.setSize(width, height);
-		this.width = width;
-		this.height = height;
+		world.getCamera().resize(width, height);
 	}
 
 	@Override
@@ -143,6 +146,10 @@ public class GameScreen implements Screen, InputProcessor {
 		lastTouchedX = screenX;
 		lastTouchedY = screenY;		
 		
+		world.getCamera().setAcceleration(new Vector2(0f, 0f));
+		world.getCamera().setVelocity(new Vector2(0f, 0f));
+		
+		world.getCamera().setFree(false);
 		return true;
 	}
 
@@ -150,23 +157,25 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// if (!Gdx.app.getType().equals(ApplicationType.Android))
 		// return false;
-
+		world.getCamera().setShift(lastTouchedX-screenX, screenY-lastTouchedY);
+		world.getCamera().setFree(true);
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		// TODO Auto-generated method stub
-		
-		float leftConer = renderer.getCamShiftX() - renderer.getCam().viewportWidth/2;
+		/*
+		float leftConer = renderer.getCamShiftX() - renderer.getCamera().viewportWidth/2;
 		float bottomConer = renderer.getCamShiftY() - renderer.getCam().viewportHeight/2;
 		
-		float x = leftConer + (screenX-lastTouchedX + width/2) * renderer.getCam().viewportWidth/width;
-		float y = bottomConer + (height/2 - screenY + lastTouchedY) * renderer.getCam().viewportHeight/height;
-
+		float x = leftConer + (screenX+lastTouchedX - width/2) * renderer.getCam().viewportWidth/width;
+		float y = bottomConer + (height/2 + screenY - lastTouchedY) * renderer.getCam().viewportHeight/height;
+	
 		renderer.setCamShiftX(x);
 		renderer.setCamShiftY(y);
-		renderer.updateCam();
+		*/
+		world.getCamera().setShift(lastTouchedX-screenX, screenY-lastTouchedY);
 		
 		lastTouchedX = screenX;
 		lastTouchedY = screenY;

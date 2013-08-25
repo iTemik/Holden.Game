@@ -2,6 +2,7 @@ package bar.kisskiss.holden.model;
 
 import bar.kisskiss.holden.view.WorldRenderer;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -14,6 +15,11 @@ public class World {
 	Holden holden;
 	Friend friend;
 	Target target;
+	Camera camera;
+
+	public Camera getCamera() {
+		return camera;
+	}
 
 	Rectangle drawableArea = new Rectangle();
 	
@@ -79,8 +85,8 @@ public class World {
 		holden = new Holden(new Vector2(55, 25), 5);
 		friend = new Friend(new Vector2(20, 40), 10);
 		target = new Target(new Vector2(50, 35));		
-		level = new Level(1000, 500);	
-
+		level = new Level(1000, 500);
+		camera = new Camera(new OrthographicCamera(400f, 300f));
 	}
 
 }

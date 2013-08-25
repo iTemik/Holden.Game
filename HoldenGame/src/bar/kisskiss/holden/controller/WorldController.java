@@ -7,6 +7,8 @@ public class WorldController {
 
 	private World world;
 	
+	
+	
 	public void update(float delta) {
 		for (InteractObject object : world.getDrawableObjects()) {
 			object.update(delta);
