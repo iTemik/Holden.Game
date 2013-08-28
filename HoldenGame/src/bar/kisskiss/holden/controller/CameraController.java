@@ -70,14 +70,15 @@ public class CameraController {
 			//cam.getAcceleration().scl(0.95f);
 		}
 		
-		if(cam.getVelocity().x <= 0.01f && cam.getVelocity().y <= 0.01f  ) {
+		if(Math.abs(cam.getVelocity().x) <= 0.01f && Math.abs(cam.getVelocity().y) <= 0.01f && cam.isFree() ) {
 			//cam.getVelocity().x = 0f;
 			//cam.getVelocity().y = 0f;
 			
 			/*AK TODO: refactor*/
 			if(world != null) {
-				world.getTarget().setPosition(cam.getPosition());
-				world.getTarget().setReached(false);
+				world.getTarget().setPosition(cam.getPosition());				
+				//if(world.getTarget().isReached())
+					//world.getTarget().setReached(false);
 			}
 		}
 	}

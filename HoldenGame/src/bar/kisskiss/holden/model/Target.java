@@ -23,6 +23,8 @@ public class Target {
 
 	public void setPosition(Vector2 position) {
 		this.position = position;
+		this.bounds.x = position.x;
+		this.bounds.y = position.y;
 		reached = false;
 	}
 
