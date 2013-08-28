@@ -70,9 +70,9 @@ public class CameraController {
 			//cam.getAcceleration().scl(0.95f);
 		}
 		
-		if(cam.getVelocity().x <= 0.01f && cam.getVelocity().y <= 0.01f ) {
-			cam.getVelocity().x = 0f;
-			cam.getVelocity().y = 0f;
+		if(cam.getVelocity().x <= 0.01f && cam.getVelocity().y <= 0.01f  ) {
+			//cam.getVelocity().x = 0f;
+			//cam.getVelocity().y = 0f;
 			
 			/*AK TODO: refactor*/
 			if(world != null) {
