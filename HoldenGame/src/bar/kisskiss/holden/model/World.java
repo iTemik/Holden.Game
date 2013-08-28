@@ -1,5 +1,6 @@
 package bar.kisskiss.holden.model;
 
+import bar.kisskiss.holden.controller.CameraController;
 import bar.kisskiss.holden.view.WorldRenderer;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -86,7 +87,7 @@ public class World {
 		friend = new Friend(new Vector2(20, 40), 10);
 		target = new Target(new Vector2(50, 35));		
 		level = new Level(1000, 500);
-		camera = new Camera(new OrthographicCamera(400f, 300f));
+		camera = new Camera(new OrthographicCamera(400f, 300f));		
 	}
 
 }

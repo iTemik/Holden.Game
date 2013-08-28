@@ -1,6 +1,7 @@
 package bar.kisskiss.holden.controller;
 
 import bar.kisskiss.holden.model.Camera;
+import bar.kisskiss.holden.model.World;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,6 +14,8 @@ public class CameraController {
 	private static final float MAX_VEL = 500f;
 	private static final float MAX_ACC = 5000f;
 	
+	/*AK TODO: refactor*/
+	World world = null;
 	
 	public CameraController(Camera cam) {
 		this.cam = cam;
@@ -66,5 +69,20 @@ public class CameraController {
 			cam.getVelocity().scl(0.95f);
 			//cam.getAcceleration().scl(0.95f);
 		}
+		
+		if(cam.getVelocity().x <= 0.01f && cam.getVelocity().y <= 0.01f ) {
+			cam.getVelocity().x = 0f;
+			cam.getVelocity().y = 0f;
+			
+			/*AK TODO: refactor*/
+			if(world != null) {
+				world.getTarget().setPosition(cam.getPosition());
+				world.getTarget().setReached(false);
+			}
+		}
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
 	}
 }

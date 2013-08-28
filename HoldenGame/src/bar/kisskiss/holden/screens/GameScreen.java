@@ -39,6 +39,7 @@ public class GameScreen implements Screen, InputProcessor {
 		holdenController = new HoldenController(world);
 		worldController = new WorldController(world);
 		cameraController = new CameraController(world.getCamera());
+		cameraController.setWorld(world);
 		Gdx.input.setInputProcessor(this);
 		
 	}
