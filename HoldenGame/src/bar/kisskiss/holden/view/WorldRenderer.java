@@ -1,22 +1,23 @@
 package bar.kisskiss.holden.view;
 
-import java.util.Map;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import bar.kisskiss.holden.model.AccelerationPad;
-import bar.kisskiss.holden.model.Friend;
-import bar.kisskiss.holden.model.Holden;
-import bar.kisskiss.holden.model.Holden.State;
-import bar.kisskiss.holden.model.InteractObject;
+
+import bar.kisskiss.holden.model.actors.AccelerationPad;
+import bar.kisskiss.holden.model.actors.Friend;
+import bar.kisskiss.holden.model.actors.Holden;
+import bar.kisskiss.holden.model.general.InteractObject;
+
 import bar.kisskiss.holden.model.Target;
 import bar.kisskiss.holden.model.World;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 //import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -37,14 +38,17 @@ public class WorldRenderer {
 
 	/** for debug rendering **/
 	ShapeRenderer debugRenderer = new ShapeRenderer();
-	
-	private TextureRegion holdenIdle;
-	private TextureRegion holdenFrame;	
-	private TextureRegion friendFrame;
 
-	
+	private TreeMap<Integer, Array<InteractObject>> drawByLevelMap;	
 	private TextureAtlas atlas;
 	
+	private BitmapFont font;
+	    
+	private SpriteBatch spriteBatch;
+	private boolean debug = false;
+	private int width;
+	private int height;
+
 	public TextureAtlas getAtlas() {
 		return atlas;
 	}
@@ -52,24 +56,14 @@ public class WorldRenderer {
 	public void setAtlas(TextureAtlas atlas) {
 		this.atlas = atlas;
 	}
-
-	private BitmapFont font;
 	
-	/** Animations **/
-    private Animation walkAnimation;
-    private Animation friendAnimation;
-    
-	private SpriteBatch spriteBatch;
-	private boolean debug = false;
-	private int width;
-	private int height;
-
 	public void setSize(int w, int h) {
 		this.width = w;
 		this.height = h;
 	}
 
 	public WorldRenderer(World world, boolean debug) {
+		drawByLevelMap = new TreeMap<Integer, Array<InteractObject>>();
 		this.world = world;		
 
 		this.debug = debug;
@@ -80,7 +74,7 @@ public class WorldRenderer {
 	public SpriteBatch getSpriteBatch() {
 		return spriteBatch;
 	}
-/*AK TODO: refactor*/
+
 	public void setSpriteBatch(SpriteBatch spriteBatch) {
 		this.spriteBatch = spriteBatch;
 	}
@@ -104,20 +98,19 @@ public class WorldRenderer {
 	private void loadTextures() {
 		
 		atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
-		holdenIdle = atlas.findRegion("holden-00");
-
+		world.getHolden().setHoldenIdle(atlas.findRegion("holden-00"));
 	
 		TextureRegion[] walkFrames = new TextureRegion[16];
 		for (int i = 0; i < walkFrames.length; i++) {			
 			walkFrames[i] = atlas.findRegion("holden-" +(i/10)+""+(i%10));
 		}
-		walkAnimation = new Animation(WALKING_FRAME_DURATION, walkFrames);
+		world.getHolden().setHoldenAnimation(new Animation(WALKING_FRAME_DURATION, walkFrames));
 		
 		TextureRegion[] friendFrames = new TextureRegion[4];		
 		for (int i = 0; i < friendFrames.length; i++) {	
 			friendFrames[i] = atlas.findRegion("friend-" +(i/10)+""+(i%10));
 		}
-		friendAnimation = new Animation(0.1f, friendFrames);
+		world.getFriend().setAnimation(new Animation(0.1f, friendFrames));
 		font = new BitmapFont();
 		
 	}
@@ -136,11 +129,11 @@ public class WorldRenderer {
 		if(world == null) return;
 		spriteBatch.begin();
 		updateCam();
-		drawInteractObjects(spriteBatch);
-		drawHolden();				
-		drawFriend();
+		updateTreeMap(world.getDrawableObjects());
+		drawSprites(spriteBatch, drawByLevelMap);
+
 		if (debug) {
-			
+		
 			font.draw(spriteBatch, String.format("target  x: %.2f   y: %.2f",
 					world.getTarget().getPosition().x, world.getTarget()
 							.getPosition().y), 10, 20);
@@ -149,23 +142,91 @@ public class WorldRenderer {
 							.getPosition().y), 10, 32);
 			font.draw(spriteBatch, String.format("drawable  r.x: %.2f   r.w: %.2f  cam pos x:  %.2f",
 					world.getDrawableArea().getX(), world.getDrawableArea().getWidth(), world.getCamera().getPosition().x), 10, 44);
-							
-/*
+/*			
 			font.draw(spriteBatch, String.format("cam velocity  x: %.2f   y: %.2f    free: %.0f",
 					world.getCamera().getVelocity().x, world.getCamera().getVelocity().y, world.getCamera().isFree() ? 1f : 0f), 10, 20);
 			font.draw(spriteBatch, String.format("cam accel  x: %.2f   y: %.2f",
 					world.getCamera().getAcceleration().x, world.getCamera().getAcceleration().y), 10, 32);
-			font.draw(spriteBatch, String.format("cam delta position  x: %.2f   y: %.2f",
-					world.getCamera().getDeltaPosition().x, world.getCamera().getDeltaPosition().y), 10, 44);
-			
+	*/	
+			/*
+			font.draw(spriteBatch, String.format("Holden world x: %.2f   y: %.2f",
+					world.getHolden().getPosition().x, world.getHolden().getPosition().y), 10, 44);
+		
 			font.draw(spriteBatch, String.format(
-					"Cam shift  x: %.2f   y: %.2f", world.getCamera().getPosition().x,
-					world.getCamera().getPosition().y), 10, 56);
+					"Holden screen x: %.2f   y: %.2f   w: %.2f   h: %.2f",
+					world.getHolden().getRectOnScreen().x, world.getHolden()
+							.getRectOnScreen().y, world.getHolden()
+							.getRectOnScreen().width, world.getHolden()
+							.getRectOnScreen().height), 10, 56);
 */
 		}
 		spriteBatch.end();
 		if (debug) {
 			drawDebug();			
+		}
+	}
+
+	private void drawSprites(SpriteBatch sb, TreeMap<Integer, Array<InteractObject>> map) {
+		// TODO Auto-generated method stub
+		/*
+		for (InteractObject io : drawMap) {
+			//io.draw(sb, x, y, width, height)
+			io.draw(sb);
+		}
+		*/
+		Iterator<Entry<Integer, Array<InteractObject>>> entries = map.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry thisEntry = (Entry) entries.next();			
+			Array<InteractObject> valueList = (Array<InteractObject>) thisEntry.getValue();
+			if (valueList != null) {
+				for (InteractObject io : valueList) {
+					if(io == null)
+						continue;
+					Rectangle rectOnScreen = new Rectangle();
+					rectOnScreen.x = (io.getPosition().x
+							- world.getCamera().getPosition().x + world.getCamera()
+							.getWidth() / 2) * world.getCamera().getPpuX();
+					rectOnScreen.y = (io.getPosition().y
+							- world.getCamera().getPosition().y + world.getCamera()
+							.getHeight() / 2) * world.getCamera().getPpuY();
+					rectOnScreen.width = io.getBounds().width
+							* world.getCamera().getPpuX();
+					rectOnScreen.height = io.getBounds().height
+							* world.getCamera().getPpuY();
+
+					io.setRectOnScreen(rectOnScreen);
+					io.draw(sb);
+				}
+			}
+		}
+	}
+
+	private void updateTreeMap(Array<InteractObject> objects) {
+		// TODO Auto-generated method stub
+		drawByLevelMap.clear();
+		/*AK TODO: improve*/
+		for (InteractObject io : objects) {			
+			
+			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(io.getDepth());
+			if(ioArray == null)
+				ioArray = new Array<InteractObject>();
+			ioArray.add(io);
+			drawByLevelMap.put(io.getDepth(), ioArray);
+			
+		}
+		{
+			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(world.getHolden().getDepth());
+			if(ioArray == null)
+				ioArray = new Array<InteractObject>();
+			ioArray.add( world.getHolden());
+			drawByLevelMap.put(world.getHolden().getDepth(),ioArray);
+		}
+		{
+			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(world.getFriend().getDepth());
+			if(ioArray == null)
+				ioArray = new Array<InteractObject>();
+			ioArray.add( world.getFriend());
+			drawByLevelMap.put(world.getFriend().getDepth(),ioArray);
 		}
 	}
 
@@ -179,46 +240,6 @@ public class WorldRenderer {
 
 	public boolean getDebug() {
 		return debug;
-	}
-
-	private void drawInteractObjects(SpriteBatch sb) {
-		for (InteractObject interactObject : world.getDrawableObjects()) {
-			interactObject.draw(sb, world.getCamera().getPosition().x - world.getCamera().getWidth() / 2, world.getCamera().getPosition().y
-					- world.getCamera().getHeight() / 2, world.getCamera().getPpuX(), world.getCamera().getPpuY());
-		}
-	}
-
-	private void drawHolden() {
-		Holden holden = world.getHolden();
-		holdenFrame = holdenIdle;
-
-		if (holden.getState().equals(State.WALKING)) {
-			holdenFrame = walkAnimation
-					.getKeyFrame(holden.getStateTime(), true);
-		}
-		Sprite sprite = new Sprite(holdenFrame);
-		sprite.rotate(world.getHolden().getFacing().angle() - 90);
-
-		sprite.setX((holden.getPosition().x - world.getCamera().getPosition().x + world.getCamera().getWidth() / 2)
-				* world.getCamera().getPpuX());
-		sprite.setY((holden.getPosition().y - world.getCamera().getPosition().y + world.getCamera().getHeight() / 2)
-				* world.getCamera().getPpuY());
-		sprite.draw(spriteBatch);
-
-	}
-
-	private void drawFriend() {
-		Friend friend = world.getFriend();
-		friendFrame = friendAnimation.getKeyFrame(friend.getStateTime(), true);
-
-		spriteBatch
-				.draw(friendFrame,
-						(friend.getPosition().x - world.getCamera().getPosition().x + world.getCamera().getWidth() / 2)
-								* world.getCamera().getPpuX(),
-						(friend.getPosition().y - world.getCamera().getPosition().y + world.getCamera().getHeight() / 2)
-								* world.getCamera().getPpuY(), friend.getBounds().width * world.getCamera().getPpuX(),
-						friend.getBounds().height * world.getCamera().getPpuY());
-
 	}
 
 	private void drawDebug() {

@@ -10,11 +10,10 @@ public class CameraController {
 
 	private Camera cam;
 	
-	private static final float DAMP 	= 0.9f;
+	//private static final float DAMP 	= 0.9f;
 	private static final float MAX_VEL = 500f;
 	private static final float MAX_ACC = 5000f;
 	
-	/*AK TODO: refactor*/
 	World world = null;
 	
 	public CameraController(Camera cam) {
@@ -22,18 +21,8 @@ public class CameraController {
 	}
 	
 	public void update(float delta) {
-		/*AK TODO: set new Velocity, aCccel and pos*/
-		//cam.getAcceleration().add(new Vector2(cam.getDeltaPosition()).scl(60f));
-		/*
-		if(cam.getDeltaPosition().x == 0f && cam.getDeltaPosition().y == 0f ) {
-			cam.getVelocity().scl(DAMP);
-			cam.getAcceleration().scl(DAMP);
-		}
-		*/
-		
-		//cam.getVelocity().add(cam.getAcceleration()).scl(delta);
-		cam.getVelocity().add(new Vector2(cam.getDeltaPosition().scl(3f)));
-		
+
+		cam.getVelocity().add(new Vector2(cam.getDeltaPosition().scl(1.5f)));
 		
 		if(cam.getVelocity().x >= MAX_VEL)
 			cam.getVelocity().x = MAX_VEL;
@@ -70,15 +59,15 @@ public class CameraController {
 			//cam.getAcceleration().scl(0.95f);
 		}
 		
-		if(Math.abs(cam.getVelocity().x) <= 0.01f && Math.abs(cam.getVelocity().y) <= 0.01f && cam.isFree() ) {
+		if ((Math.abs(cam.getVelocity().x) <= 0.02f)
+				&& (Math.abs(cam.getVelocity().y) <= 0.02f) 
+				&& cam.isFree()) {
 			//cam.getVelocity().x = 0f;
 			//cam.getVelocity().y = 0f;
 			
-			/*AK TODO: refactor*/
-			if(world != null) {
-				world.getTarget().setPosition(cam.getPosition());				
-				//if(world.getTarget().isReached())
-					//world.getTarget().setReached(false);
+			/*AK TODO: BUG?*/
+			if(world != null && world.getTarget().isReached()) {
+				world.getTarget().setPosition(cam.getPosition());
 			}
 		}
 	}

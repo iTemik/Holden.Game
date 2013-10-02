@@ -7,12 +7,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import bar.kisskiss.holden.model.AccelerationPad;
-import bar.kisskiss.holden.model.Holden;
-import bar.kisskiss.holden.model.InteractObject;
 import bar.kisskiss.holden.model.Target;
 import bar.kisskiss.holden.model.World;
-import bar.kisskiss.holden.model.Holden.State;
+import bar.kisskiss.holden.model.actors.Block;
+import bar.kisskiss.holden.model.actors.Holden;
+import bar.kisskiss.holden.model.actors.Holden.State;
+import bar.kisskiss.holden.model.general.InteractObject;
 
 public class HoldenController {
 
@@ -156,11 +156,14 @@ public class HoldenController {
 		for (InteractObject interactObject : collidable) {
 			if (interactObject == null)
 				continue;
-			if (holdenRect.overlaps(interactObject.getBounds())) {
-				world.getCollisionRects().add(interactObject.getBounds());
+			if(interactObject.getClass() != Block.class)
+				continue;
+			Block block = (Block)interactObject;
+			if (holdenRect.overlaps(block.getBounds())) {
+				world.getCollisionRects().add(block.getBounds());
 
 				// friend.getVelocity().scl(DAMP);
-				if (interactObject.getState() == InteractObject.State.STOPPER) {
+				if (block.getState() == Block.State.STOPPER) {
 					holden.getAcceleration().x = 0;
 					holden.getAcceleration().y = 0;
 					holden.getVelocity().x = 0;

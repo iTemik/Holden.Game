@@ -2,10 +2,12 @@ package bar.kisskiss.holden.model;
 
 import java.util.Random;
 
+import bar.kisskiss.holden.model.actors.AccelerationPad;
+import bar.kisskiss.holden.model.actors.Block;
+import bar.kisskiss.holden.model.general.InteractObject;
 import bar.kisskiss.holden.view.WorldRenderer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -70,21 +72,23 @@ public class Level {
 				
 				if(randomNum<1) {
 					int randomSize = rand.nextInt(6)+5;
-					InteractObject object = new InteractObject(new Rectangle(i*10, j*10, randomSize, randomSize));
+					Block object = new Block(new Rectangle(i*10, j*10, randomSize, randomSize));
 					
 					/* AK TODO: refactor. use some pattern to get renderer.*/
 					if(randomSize%2==0) {
-						object.setState(InteractObject.State.SLOWER);
+						object.setState(Block.State.SLOWER);
 						object.setTextureRegion(atlas.findRegion("tree"));
+						object.setDepth(2);
 					}
 					else {
-						object.setState(InteractObject.State.STOPPER);
+						object.setState(Block.State.STOPPER);
 						object.setTextureRegion(atlas.findRegion("crate"));
+						object.setDepth(1);
 					}
 					interactObjects.add(object);
 				}
 				
-				if( i%5==0 && j%5==0){
+				if( i%10==0 && j%10==0){
 					Vector2 force = new Vector2(1,1);					
 					force.setAngle(360/8*(randomNum+1));
 					force.nor().scl(200);

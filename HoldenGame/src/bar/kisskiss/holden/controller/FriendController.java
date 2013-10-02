@@ -6,13 +6,13 @@ import java.util.Map;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 
-import bar.kisskiss.holden.model.AccelerationPad;
-import bar.kisskiss.holden.model.Friend;
-import bar.kisskiss.holden.model.Holden;
-import bar.kisskiss.holden.model.InteractObject;
 import bar.kisskiss.holden.model.World;
+import bar.kisskiss.holden.model.actors.AccelerationPad;
+import bar.kisskiss.holden.model.actors.Block;
+import bar.kisskiss.holden.model.actors.Friend;
+import bar.kisskiss.holden.model.actors.Holden;
+import bar.kisskiss.holden.model.general.InteractObject;
 
 
 public class FriendController {
@@ -24,6 +24,17 @@ public class FriendController {
 	static {
 		keys.put(Keys.PUSH, false);		
 	};
+	
+	private World world;
+	private Holden holden;
+	private Friend friend;
+	
+	private static final float GRAVITY 	= 5f; // 10 unit per second per second
+	private static final float DAMP 	= 0.9f;
+	//private static final float DAMP1 	= 0.998f;
+	private static final float MAX_VEL = 500f;
+	
+	private Array<InteractObject> collidable = new Array<InteractObject>();
 	
 	public World getWorld() {
 		return world;
@@ -48,24 +59,6 @@ public class FriendController {
 	public void setFriend(Friend friend) {
 		this.friend = friend;
 	}
-
-	private World world;
-	private Holden holden;
-	private Friend friend;
-	
-	private static final float GRAVITY 	= 5f; // 10 unit per second per second
-	private static final float DAMP 	= 0.9f;
-	private static final float DAMP1 	= 0.998f;
-	private static final float MAX_VEL = 500f;
-	
-	private Array<InteractObject> collidable = new Array<InteractObject>();
-	
-	private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
-		@Override
-		protected Rectangle newObject() {
-			return new Rectangle();
-		}
-	};
 	
 	public FriendController(World world) {
 		this.world = world;
@@ -145,8 +138,7 @@ public class FriendController {
 	
 	private void checkCollisionWithBlocks(float delta) {
 		friend.getVelocity().scl(delta);
-		
-		//Rectangle friendRect = rectPool.obtain(); // ?????
+
 		Rectangle friendRect = new Rectangle();
 		
 		friendRect.set(friend.getBounds().x, friend.getBounds().y,
@@ -191,7 +183,8 @@ public class FriendController {
 				//friend.getVelocity().scl(DAMP);
 				if(interactObject.getClass() == AccelerationPad.class) {
 					friend.getAcceleration().add(((AccelerationPad)interactObject).getForce());	
-				} else if (interactObject.getState() == InteractObject.State.SLOWER ){
+				} else if (interactObject.getClass() == Block.class
+						&& ((Block) interactObject).getState() == Block.State.SLOWER) {
 					friend.getAcceleration().scl(DAMP);				
 				}
 					//break;
@@ -203,9 +196,6 @@ public class FriendController {
 			//friend.getAcceleration().x *= -1;
 			//friend.getVelocity().scl(-1*DAMP);
 		}
-		/*
-
-		*/
 		friend.getPosition().add(friend.getVelocity());
 		friend.getBounds().x = friend.getPosition().x;
 		friend.getBounds().y = friend.getPosition().y;

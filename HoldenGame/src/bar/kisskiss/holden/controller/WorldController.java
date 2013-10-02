@@ -1,7 +1,7 @@
 package bar.kisskiss.holden.controller;
 
-import bar.kisskiss.holden.model.InteractObject;
 import bar.kisskiss.holden.model.World;
+import bar.kisskiss.holden.model.general.InteractObject;
 
 public class WorldController {
 

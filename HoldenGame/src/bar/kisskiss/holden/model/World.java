@@ -1,7 +1,8 @@
 package bar.kisskiss.holden.model;
 
-import bar.kisskiss.holden.controller.CameraController;
-import bar.kisskiss.holden.view.WorldRenderer;
+import bar.kisskiss.holden.model.actors.Friend;
+import bar.kisskiss.holden.model.actors.Holden;
+import bar.kisskiss.holden.model.general.InteractObject;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,6 +24,7 @@ public class World {
 	}
 
 	Rectangle drawableArea = new Rectangle();
+	Array<InteractObject> drawableObjects = new Array<InteractObject>();
 	
 	 public Rectangle getDrawableArea() {
 		return drawableArea;
@@ -30,13 +32,15 @@ public class World {
 
 	public void setDrawableArea(Rectangle drawableArea) {
 		this.drawableArea = drawableArea;		
+		// AK TODO: TODO:!
 		level.getBlocksInRect( drawableArea, drawableObjects );
+		
 	}
 	
-	Array<InteractObject> drawableObjects = new Array<InteractObject>();
 
 	public void setDrawableObjects(Array<InteractObject> drawableObjects) {
-		this.drawableObjects = drawableObjects;
+		// AK TODO: TODO:!
+		//this.drawableObjects = drawableObjects;
 	}
 
 	/** A world has a level through which Bob needs to go through **/
