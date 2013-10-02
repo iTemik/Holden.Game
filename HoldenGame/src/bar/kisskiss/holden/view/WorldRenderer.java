@@ -48,6 +48,13 @@ public class WorldRenderer {
 	private boolean debug = false;
 	private int width;
 	private int height;
+	
+	private static final int MAXSAMPLES=100;
+	int tickindex=0;
+	long ticksum=0;
+	long ticklist[] = new long[MAXSAMPLES];
+	long lastTime;
+	long deltaTime = 0;
 
 	public TextureAtlas getAtlas() {
 		return atlas;
@@ -69,6 +76,7 @@ public class WorldRenderer {
 		this.debug = debug;
 		spriteBatch = new SpriteBatch();
 		loadTextures();
+		lastTime = System.currentTimeMillis();
 	}
 
 	public SpriteBatch getSpriteBatch() {
@@ -127,11 +135,16 @@ public class WorldRenderer {
 
 	public void render() {
 		if(world == null) return;
+		long end_time = System.currentTimeMillis();
+		deltaTime = end_time-lastTime;
+		lastTime = end_time;
+		
 		spriteBatch.begin();
 		updateCam();
 		updateTreeMap(world.getDrawableObjects());
 		drawSprites(spriteBatch, drawByLevelMap);
-
+		if(lastTime != 0)
+			font.draw(spriteBatch, String.format("%.2f   %d", 1000/CalcAverageTick(deltaTime), deltaTime), 10, 56);
 		if (debug) {
 		
 			font.draw(spriteBatch, String.format("target  x: %.2f   y: %.2f",
@@ -142,28 +155,27 @@ public class WorldRenderer {
 							.getPosition().y), 10, 32);
 			font.draw(spriteBatch, String.format("drawable  r.x: %.2f   r.w: %.2f  cam pos x:  %.2f",
 					world.getDrawableArea().getX(), world.getDrawableArea().getWidth(), world.getCamera().getPosition().x), 10, 44);
-/*			
-			font.draw(spriteBatch, String.format("cam velocity  x: %.2f   y: %.2f    free: %.0f",
-					world.getCamera().getVelocity().x, world.getCamera().getVelocity().y, world.getCamera().isFree() ? 1f : 0f), 10, 20);
-			font.draw(spriteBatch, String.format("cam accel  x: %.2f   y: %.2f",
-					world.getCamera().getAcceleration().x, world.getCamera().getAcceleration().y), 10, 32);
-	*/	
-			/*
-			font.draw(spriteBatch, String.format("Holden world x: %.2f   y: %.2f",
-					world.getHolden().getPosition().x, world.getHolden().getPosition().y), 10, 44);
-		
-			font.draw(spriteBatch, String.format(
-					"Holden screen x: %.2f   y: %.2f   w: %.2f   h: %.2f",
-					world.getHolden().getRectOnScreen().x, world.getHolden()
-							.getRectOnScreen().y, world.getHolden()
-							.getRectOnScreen().width, world.getHolden()
-							.getRectOnScreen().height), 10, 56);
-*/
+
+			
+			
 		}
 		spriteBatch.end();
 		if (debug) {
 			drawDebug();			
 		}
+		
+	}
+	
+	float CalcAverageTick(long newtick)
+	{
+	    ticksum-=ticklist[tickindex];  /* subtract value falling off */
+	    ticksum+=newtick;              /* add new value */
+	    ticklist[tickindex]=newtick;   /* save new value so it can be subtracted later */
+	    if(++tickindex==MAXSAMPLES)    /* inc buffer index */
+	        tickindex=0;
+
+	    /* return average */
+	    return((float)ticksum/MAXSAMPLES);
 	}
 
 	private void drawSprites(SpriteBatch sb, TreeMap<Integer, Array<InteractObject>> map) {
@@ -313,7 +325,6 @@ public class WorldRenderer {
 			float h = rect.height;
 			debugRenderer.rect(x, y, w, h);
 		}
-
 		debugRenderer.end();
 	}
 
