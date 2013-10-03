@@ -91,6 +91,7 @@ public class Level {
 				if( i%10==0 && j%10==0){
 					Vector2 force = new Vector2(1,1);					
 					force.setAngle(360/8*(randomNum+1));
+					//force.setAngle(45*i/10);
 					force.nor().scl(200);
 					AccelerationPad object = new AccelerationPad(new Rectangle(15+i*10,15+j*10,8,8), force);
 					object.setAnimation(WorldRenderer.createAnimationFromAtlas(atlas, "accelerator-", 4, 0.12f));			

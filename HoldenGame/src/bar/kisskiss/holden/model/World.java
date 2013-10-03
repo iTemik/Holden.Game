@@ -18,7 +18,8 @@ public class World {
 	Friend friend;
 	Target target;
 	Camera camera;
-
+	Level level;
+	
 	public Camera getCamera() {
 		return camera;
 	}
@@ -42,9 +43,6 @@ public class World {
 		// AK TODO: TODO:!
 		//this.drawableObjects = drawableObjects;
 	}
-
-	/** A world has a level through which Bob needs to go through **/
-	Level level;
 	
 	public Array<Rectangle> getCollisionRects() {
 		return collisionRects;

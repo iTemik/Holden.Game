@@ -44,38 +44,34 @@ public class InteractObjectAnimation extends InteractObject implements DrawableS
 			textureRegion = animation.getKeyFrame(getStateTime(), true);
 		}
 		Sprite sprite = new Sprite(textureRegion);
-		sprite.rotate(angle);
-		sprite.setBounds( rectOnScreen.x, rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);			
+		sprite.setBounds( rectOnScreen.x, rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);
+		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
+		sprite.rotate(angle);					
 		sprite.draw(sb);
 	}
 
 	@Override
 	public Animation getAnimation() {
-		// TODO Auto-generated method stub
 		return animation;
 	}
 
 	@Override
 	public void setAnimation(Animation animation) {
-		// TODO Auto-generated method stub
 		this.animation = animation;
 	}
 	
 	@Override
 	public void update(float delta) {
-		// TODO Auto-generated method stub
 		stateTime+=delta;
 	}
 	
 	@Override
 	public float getStateTime() {
-		// TODO Auto-generated method stub
 		return stateTime;
 	}
 
 	@Override
 	public void setStateTime(float stateTime) {
-		// TODO Auto-generated method stub
 		this.stateTime = stateTime;
 	}
 	
