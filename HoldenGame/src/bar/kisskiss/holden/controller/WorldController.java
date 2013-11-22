@@ -2,6 +2,7 @@ package bar.kisskiss.holden.controller;
 
 import bar.kisskiss.holden.model.World;
 import bar.kisskiss.holden.model.general.InteractObject;
+import bar.kisskiss.holden.model.interfaces.DrawableInterface;
 
 public class WorldController {
 
@@ -10,8 +11,9 @@ public class WorldController {
 	
 	
 	public void update(float delta) {
-		for (InteractObject object : world.getDrawableObjects()) {
-			object.update(delta);
+		//for (DrawableInterface drawable : world.getLevel().getScreenObjects()) {
+		for (DrawableInterface drawable : world.getWorldObjects()) {		
+			drawable.update(delta);
 		}
 	}
 	

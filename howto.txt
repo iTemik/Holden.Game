@@ -1,0 +1,14 @@
+1. Register on github.com
+2. Download git app. https://help.github.com/articles/set-up-git
+3. Clone Holden.Game repo
+4. Download JDK http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+5. Install IDE (Eclipse, IntelliJ IDEA)
+http://www.jetbrains.com/idea/download/index.html
+http://www.eclipse.org/downloads/
+6. Download and install libgdx libs
+http://libgdx.badlogicgames.com/download.html
+7. download and unpack http://developer.android.com/sdk/index.html
+8.
+
+
+

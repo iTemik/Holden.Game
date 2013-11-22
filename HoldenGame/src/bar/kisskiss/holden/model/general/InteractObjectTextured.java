@@ -1,5 +1,6 @@
 package bar.kisskiss.holden.model.general;
 
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,6 +13,16 @@ public class InteractObjectTextured extends InteractObject implements DrawableSp
 
 	protected float angle = 0; 
 	protected TextureRegion textureRegion;
+	protected Integer depth = 0;
+	protected Rectangle rectOnScreen;
+	
+	public InteractObjectTextured(String name, Rectangle rectangle) {
+		super(name, rectangle);
+	}
+	
+	public InteractObjectTextured(String name, Vector2 position, float size) {
+		super(name, position, size);
+	}
 	
 	@Override
 	public TextureRegion getTextureRegion() {
@@ -27,41 +38,81 @@ public class InteractObjectTextured extends InteractObject implements DrawableSp
 
 	@Override
 	public float getAngle() {
-		// TODO Auto-generated method stub
 		return angle;
 	}
 
 	@Override
 	public void setAngle(float angle) {
-		// TODO Auto-generated method stub
 		this.angle = angle;
 	}
 
-	@Override
-	public void draw(SpriteBatch sb) {
-		// TODO Auto-generated method stub
-		if(sb != null && textureRegion != null) {
-			/*AK TODO: improve? make sprite a member*/
-			Sprite sprite = new Sprite(textureRegion);
-			sprite.rotate(angle);
-			sprite.setBounds( rectOnScreen.x , rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);		
-			sprite.draw(sb);
-		}	
-	}
-
+	/*
 	public InteractObjectTextured() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InteractObjectTextured(Rectangle bounds) {
 		super(bounds);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InteractObjectTextured(Vector2 position, float size) {
 		super(position, size);
 		// TODO Auto-generated constructor stub
+	}
+*/
+	@Override
+	public void draw() {
+		if(spriteBatch != null && textureRegion != null) {
+			Sprite sprite = new Sprite(textureRegion);
+			sprite.rotate(angle);
+			sprite.setBounds( rectOnScreen.x , rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);		
+			sprite.draw(spriteBatch);
+		}
+		
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public InteractObjectTextured create(String name, Rectangle bounds) {
+		return new InteractObjectTextured(name, bounds);
+	}
+	
+	public Rectangle getRectOnScreen() {
+		return rectOnScreen;
+	}
+
+	public void setRectOnScreen(Rectangle rectOnScreen) {
+		this.rectOnScreen = rectOnScreen;
+	}
+
+	@Override
+	public SpriteBatch getSpriteBatch() {
+		return spriteBatch;
+	}
+
+	@Override
+	public void setSpriteBatch(SpriteBatch spriteBatch) {
+		this.spriteBatch = spriteBatch;
+		
+	}
+
+	@Override
+	public Integer getDepth() {
+		return depth;
+	}
+
+	@Override
+	public void setDepth(Integer depth) {
+		this.depth = depth;
 	}
 	
 	

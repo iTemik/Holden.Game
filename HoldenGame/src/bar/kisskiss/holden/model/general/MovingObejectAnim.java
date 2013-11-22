@@ -1,4 +1,5 @@
 package bar.kisskiss.holden.model.general;
+import bar.kisskiss.holden.model.interfaces.DrawableInterface;
 import bar.kisskiss.holden.model.interfaces.DrawableSpriteAnimationInterface;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -6,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+
 
 
 
@@ -16,79 +17,116 @@ public class MovingObejectAnim extends MovingObject implements DrawableSpriteAni
 	protected TextureRegion textureRegion;
 	protected float stateTime = 0;
 	protected Animation animation;
+	protected SpriteBatch spriteBatch = null;
+	protected Integer depth = 0;
+	protected Rectangle rectOnScreen;
+
 	
+	public MovingObejectAnim(String name, Rectangle bounds) {
+		super(name, bounds);
+		rectOnScreen = getBounds();
+	}
 
 	@Override
 	public TextureRegion getTextureRegion() {
-		// TODO Auto-generated method stub
 		return textureRegion;
 	}
 
 	@Override
 	public void setTextureRegion(TextureRegion textureRegion) {
-		// TODO Auto-generated method stub
 		this.textureRegion = textureRegion;
 	}
 
 	@Override
 	public float getAngle() {
-		// TODO Auto-generated method stub
 		return angle;
 	}
 
 	@Override
 	public void setAngle(float angle) {
-		// TODO Auto-generated method stub
 		this.angle = angle;
 	}
 
 	@Override
 	public Animation getAnimation() {
-		// TODO Auto-generated method stub
 		return animation;
 	}
 
 	@Override
 	public void setAnimation(Animation animation) {
-		// TODO Auto-generated method stub
 		this.animation = animation;
 	}
 
 	@Override
 	public void update(float delta) {
-		// TODO Auto-generated method stub
 		stateTime += delta;
 	}
 
 	@Override
-	public void draw(SpriteBatch sb) {
+	public void draw() {
 		if(animation != null) {
 			textureRegion = animation.getKeyFrame(getStateTime(), true);
-			//super.draw(sb, screenX, screenY, screenWidth, screenHeight);
-			//super.draw(sb);
 		}
-		Sprite sprite = new Sprite(textureRegion);
-		sprite.rotate(angle);
-		sprite.setBounds( rectOnScreen.x , rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);			
-		sprite.draw(sb);
+		if (spriteBatch != null && textureRegion != null) {
+			Sprite sprite = new Sprite(textureRegion);
+			sprite.rotate(angle);			
+			sprite.setBounds(rectOnScreen.x, rectOnScreen.y,
+					rectOnScreen.width, rectOnScreen.height);
+			sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+			sprite.draw(spriteBatch);
+		}
 	}
 	
 	@Override
 	public float getStateTime() {
-		// TODO Auto-generated method stub
 		return stateTime;
 	}
 
 	@Override
 	public void setStateTime(float stateTime) {
-		// TODO Auto-generated method stub
 		this.stateTime = stateTime;
 	}
 
+	@Override
+	public SpriteBatch getSpriteBatch() {
+		return spriteBatch;
+	}
+
+	@Override
+	public void setSpriteBatch(SpriteBatch spriteBatch) {
+		this.spriteBatch = spriteBatch;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public MovingObejectAnim create(String name, Rectangle rectangle) {
+		return new MovingObejectAnim(name, rectangle);
+	}
 	
-	public MovingObejectAnim(Vector2 position, float size) {
-		super.setPosition(position);
-		super.setBounds(new Rectangle(position.x, position.y, size, size));		
+	@Override
+	public Integer getDepth() {
+		return depth;
+	}
+
+	@Override
+	public void setDepth(Integer depth) {
+		this.depth = depth;
+	}
+	
+	public Rectangle getRectOnScreen() {
+		return rectOnScreen;
+	}
+	public void setRectOnScreen(Rectangle rectOnScreen) {
+		this.rectOnScreen = rectOnScreen;
 	}
 	
 }

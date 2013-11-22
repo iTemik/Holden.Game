@@ -146,12 +146,12 @@ public class HoldenController {
 					+ holden.getBounds().width + holden.getVelocity().y);
 		}
 
-		// populateCollidableBlocks(startX, startY, endX, endY);
-		populateCollidableBlocks(startX, startY, endX, endY);
+		// AK TODO: Refactor. Copypaste
 		holdenRect.x += holden.getVelocity().x;
 		holdenRect.y += holden.getVelocity().y;
-		world.getCollisionRects().clear();
-
+		Array<InteractObject> collidable = world.getInteractObjectsInRect(new Rectangle(startX, startY, endX, endY));
+		
+		
 		boolean stop = false;
 		for (InteractObject interactObject : collidable) {
 			if (interactObject == null)
@@ -160,7 +160,7 @@ public class HoldenController {
 				continue;
 			Block block = (Block)interactObject;
 			if (holdenRect.overlaps(block.getBounds())) {
-				world.getCollisionRects().add(block.getBounds());
+				//world.getCollisionRects().add(block.getBounds());
 
 				// friend.getVelocity().scl(DAMP);
 				if (block.getState() == Block.State.STOPPER) {
@@ -180,15 +180,6 @@ public class HoldenController {
 			holden.getBounds().y = holden.getPosition().y;
 			// friend.getVelocity().scl(1 / delta);
 		}
-	}
-
-	private void populateCollidableBlocks(int startX, int startY, int endX,
-			int endY) {
-		// TODO Auto-generated method stub
-		collidable.clear();
-		world.getLevel().getBlocksInRect(
-				new Rectangle(startX, startY, endX - startX, endY - startY),
-				collidable);
 	}
 
 	private void processInput() {

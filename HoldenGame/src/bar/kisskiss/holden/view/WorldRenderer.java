@@ -1,5 +1,7 @@
 package bar.kisskiss.holden.view;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -9,6 +11,8 @@ import bar.kisskiss.holden.model.actors.AccelerationPad;
 import bar.kisskiss.holden.model.actors.Friend;
 import bar.kisskiss.holden.model.actors.Holden;
 import bar.kisskiss.holden.model.general.InteractObject;
+import bar.kisskiss.holden.model.interfaces.DrawableInterface;
+import bar.kisskiss.holden.model.interfaces.DrawableSpriteInterface;
 
 import bar.kisskiss.holden.model.Target;
 import bar.kisskiss.holden.model.World;
@@ -34,12 +38,16 @@ public class WorldRenderer {
 	private World world;
 	//private OrthographicCamera cam;
 
-	private static final float WALKING_FRAME_DURATION = 0.053f;
+	// 5 km /h = 1.4 m/s = 6 unit/s
+	// walking cadence = 100 (100 steps per minute) = 100/60 steps per sec 1.66667 steps
+	// 1 step = 8 frames. => 100/60*8= 13.4 frames per sec = 0.075f
+	private static final float WALKING_FRAME_DURATION = 0.075f;
+	//private static final float WALKING_FRAME_DURATION = 0.053f;
 
 	/** for debug rendering **/
 	ShapeRenderer debugRenderer = new ShapeRenderer();
 
-	private TreeMap<Integer, Array<InteractObject>> drawByLevelMap;	
+	private TreeMap<Integer, Array<DrawableInterface>> drawByLevelMap;	
 	private TextureAtlas atlas;
 	
 	private BitmapFont font;
@@ -70,13 +78,28 @@ public class WorldRenderer {
 	}
 
 	public WorldRenderer(World world, boolean debug) {
-		drawByLevelMap = new TreeMap<Integer, Array<InteractObject>>();
+		drawByLevelMap = new TreeMap<Integer, Array<DrawableInterface>>();
 		this.world = world;		
 
 		this.debug = debug;
 		spriteBatch = new SpriteBatch();
 		loadTextures();
 		lastTime = System.currentTimeMillis();
+		
+		updateSpriteBatch();
+	}
+
+	private void updateSpriteBatch() {
+		// TODO Auto-generated method stub
+		HashSet<DrawableInterface> objects = world.getWorldObjects();
+		for (DrawableInterface obj : objects) {
+			DrawableSpriteInterface drawableSprite = (DrawableSpriteInterface) obj;
+			if ( drawableSprite != null) {
+				drawableSprite.setSpriteBatch(spriteBatch);
+			}
+				
+		}
+		
 	}
 
 	public SpriteBatch getSpriteBatch() {
@@ -118,7 +141,7 @@ public class WorldRenderer {
 		for (int i = 0; i < friendFrames.length; i++) {	
 			friendFrames[i] = atlas.findRegion("friend-" +(i/10)+""+(i%10));
 		}
-		world.getFriend().setAnimation(new Animation(0.1f, friendFrames));
+		world.getFriend().setAnimation(new Animation(0.25f, friendFrames));
 		font = new BitmapFont();
 		
 	}
@@ -139,10 +162,18 @@ public class WorldRenderer {
 		deltaTime = end_time-lastTime;
 		lastTime = end_time;
 		
-		spriteBatch.begin();
+		// get screen objects
 		updateCam();
-		updateTreeMap(world.getDrawableObjects());
-		drawSprites(spriteBatch, drawByLevelMap);
+		updateTreeMap(world.getWorldObjects());
+
+		spriteBatch.begin();
+		// draw screen sprite objects
+		drawSprites();
+
+		// draw HUD
+		//drawHUD(spriteBatch, drawByLevelMap);
+		
+	
 		if(lastTime != 0)
 			font.draw(spriteBatch, String.format("%.2f   %d", 1000/CalcAverageTick(deltaTime), deltaTime), 10, 56);
 		if (debug) {
@@ -152,12 +183,7 @@ public class WorldRenderer {
 							.getPosition().y), 10, 20);
 			font.draw(spriteBatch, String.format("holden  x: %.2f   y: %.2f",
 					world.getHolden().getPosition().x, world.getHolden()
-							.getPosition().y), 10, 32);
-			font.draw(spriteBatch, String.format("drawable  r.x: %.2f   r.w: %.2f  cam pos x:  %.2f",
-					world.getDrawableArea().getX(), world.getDrawableArea().getWidth(), world.getCamera().getPosition().x), 10, 44);
-
-			
-			
+							.getPosition().y), 10, 32);	
 		}
 		spriteBatch.end();
 		if (debug) {
@@ -166,6 +192,57 @@ public class WorldRenderer {
 		
 	}
 	
+	private void drawSprites() {
+		HashSet<DrawableInterface> drawables = world.getScreenObjects();
+		for (DrawableInterface dr : drawables) {
+			Rectangle rectOnScreen = new Rectangle();
+			rectOnScreen.x = (dr.getBounds().x
+					- world.getCamera().getPosition().x + world.getCamera()
+					.getWidth() / 2) * world.getCamera().getPpuX();
+			rectOnScreen.y = (dr.getBounds().y
+					- world.getCamera().getPosition().y + world.getCamera()
+					.getHeight() / 2) * world.getCamera().getPpuY();
+			rectOnScreen.width = dr.getBounds().width
+					* world.getCamera().getPpuX();
+			rectOnScreen.height = dr.getBounds().height
+					* world.getCamera().getPpuY();
+			
+			dr.setRectOnScreen(rectOnScreen);
+			dr.draw();
+		}
+	}
+
+	private void updateTreeMap(HashSet<DrawableInterface> screenObjects) {
+		drawByLevelMap.clear();
+		for (DrawableInterface drawable : screenObjects) {
+
+			Array<DrawableInterface> drawables = (Array<DrawableInterface>) drawByLevelMap
+					.get(drawable.getDepth());
+			if (drawables == null)
+				drawables = new Array<DrawableInterface>();
+			drawables.add(drawable);
+			drawByLevelMap.put(drawable.getDepth(), drawables);
+
+		}
+		{
+			Array<DrawableInterface> drawables = (Array<DrawableInterface>) drawByLevelMap
+					.get(world.getHolden().getDepth());
+			if (drawables == null)
+				drawables = new Array<DrawableInterface>();
+			drawables.add(world.getHolden());
+			drawByLevelMap.put(world.getHolden().getDepth(), drawables);
+		}
+		{
+			Array<DrawableInterface> drawables = (Array<DrawableInterface>) drawByLevelMap
+					.get(world.getFriend().getDepth());
+			if (drawables == null)
+				drawables = new Array<DrawableInterface>();
+			drawables.add(world.getFriend());
+			drawByLevelMap.put(world.getFriend().getDepth(), drawables);
+		}
+
+	}
+
 	float CalcAverageTick(long newtick)
 	{
 	    ticksum-=ticklist[tickindex];  /* subtract value falling off */
@@ -177,15 +254,8 @@ public class WorldRenderer {
 	    /* return average */
 	    return((float)ticksum/MAXSAMPLES);
 	}
-
+/*
 	private void drawSprites(SpriteBatch sb, TreeMap<Integer, Array<InteractObject>> map) {
-		// TODO Auto-generated method stub
-		/*
-		for (InteractObject io : drawMap) {
-			//io.draw(sb, x, y, width, height)
-			io.draw(sb);
-		}
-		*/
 		Iterator<Entry<Integer, Array<InteractObject>>> entries = map.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry thisEntry = (Entry) entries.next();			
@@ -212,36 +282,7 @@ public class WorldRenderer {
 			}
 		}
 	}
-
-	private void updateTreeMap(Array<InteractObject> objects) {
-		// TODO Auto-generated method stub
-		drawByLevelMap.clear();
-		/*AK TODO: improve*/
-		for (InteractObject io : objects) {			
-			
-			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(io.getDepth());
-			if(ioArray == null)
-				ioArray = new Array<InteractObject>();
-			ioArray.add(io);
-			drawByLevelMap.put(io.getDepth(), ioArray);
-			
-		}
-		{
-			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(world.getHolden().getDepth());
-			if(ioArray == null)
-				ioArray = new Array<InteractObject>();
-			ioArray.add( world.getHolden());
-			drawByLevelMap.put(world.getHolden().getDepth(),ioArray);
-		}
-		{
-			Array<InteractObject> ioArray = (Array<InteractObject>) drawByLevelMap.get(world.getFriend().getDepth());
-			if(ioArray == null)
-				ioArray = new Array<InteractObject>();
-			ioArray.add( world.getFriend());
-			drawByLevelMap.put(world.getFriend().getDepth(),ioArray);
-		}
-	}
-
+*/
 	public boolean isDebug() {
 		return debug;
 	}
@@ -259,22 +300,22 @@ public class WorldRenderer {
 		debugRenderer.setProjectionMatrix(world.getCamera().getCam().combined);
 		debugRenderer.begin(ShapeType.Filled);
 		debugRenderer.setColor(new Color(0, 0, 1, 0.2f));
-		for (Rectangle rect : world.getCollisionRects()) {
-			debugRenderer.rect(rect.x-world.getCamera().getPosition().x, rect.y-world.getCamera().getPosition().y, rect.width, rect.height);
-		}
+//		for (Rectangle rect : world.getCollisionRects()) {
+//			debugRenderer.rect(rect.x-world.getCamera().getPosition().x, rect.y-world.getCamera().getPosition().y, rect.width, rect.height);
+//		}
 		debugRenderer.end();
 		// render blocks
 		debugRenderer.begin(ShapeType.Line);
 
-		for (InteractObject interactObject : world.getDrawableObjects()) {
-			Rectangle rect = interactObject.getBounds();
-			if (interactObject.getClass() == AccelerationPad.class) {
+		for (DrawableInterface drawable : world.getScreenObjects()) {
+			Rectangle rect = drawable.getBounds();
+			if (drawable.getClass() == AccelerationPad.class) {
 				debugRenderer.setColor(new Color(1, 1, 0, 1));
 			} else {
 				debugRenderer.setColor(new Color(1, 0, 0, 1));
 			}
-			debugRenderer.rect(interactObject.getPosition().x-world.getCamera().getPosition().x,
-					interactObject.getPosition().y-world.getCamera().getPosition().y, rect.width, rect.height);
+			debugRenderer.rect(drawable.getBounds().x-world.getCamera().getPosition().x,
+					drawable.getBounds().y-world.getCamera().getPosition().y, rect.width, rect.height);
 		}
 
 		// render holden
@@ -317,6 +358,7 @@ public class WorldRenderer {
 
 		{
 			/*Draw drawable rect*/
+			/*
 			Rectangle rect = world.getDrawableArea();
 			debugRenderer.setColor(new Color(1, 0, 0, 1));
 			float x = rect.x-world.getCamera().getPosition().x;
@@ -324,19 +366,18 @@ public class WorldRenderer {
 			float w = rect.width;
 			float h = rect.height;
 			debugRenderer.rect(x, y, w, h);
+		*/
 		}
 		debugRenderer.end();
 	}
 
 	public void updateCam() {
-		// TODO Auto-generated method stub
-		//cam.position.x = camera.getPosition().x;
-		//cam.position.y = camera.getPosition().x;
+		
 		float x = world.getCamera().getPosition().x - world.getCamera().getWidth() / 2;
 		float y = world.getCamera().getPosition().y - world.getCamera().getHeight() / 2;
 		//world.setDrawableArea(new Rectangle(world.getCamera().getCam().position.x - world.getCamera().getWidth() / 2,
 		//		world.getCamera().getCam().position.y - world.getCamera().getHeight() / 2, world.getCamera().getWidth()*world.getCamera().getPpuX(), world.getCamera().getHeight()*world.getCamera().getPpuY()));
-		world.setDrawableArea(new Rectangle(x, y, world.getCamera().getWidth(),
+		world.fillScreenObjects(new Rectangle(x, y, world.getCamera().getWidth(),
 				world.getCamera().getHeight()));
 		world.getCamera().update();
 		//cam.update();

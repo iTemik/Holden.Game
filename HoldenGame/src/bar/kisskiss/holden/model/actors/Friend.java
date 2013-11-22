@@ -1,14 +1,14 @@
 package bar.kisskiss.holden.model.actors;
 
+import java.util.Calendar;
+
 import bar.kisskiss.holden.model.general.MovingObejectAnim;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Friend extends MovingObejectAnim {
 
 	float stateTime = 0;
-	
-	
 	public enum State {
 		IDLE, MOVING
 	}
@@ -24,8 +24,9 @@ public class Friend extends MovingObejectAnim {
 		this.state = state;
 	}
 
-	public Friend(Vector2 position, float size) {
-		super(position, size);
+	public Friend(String name, Rectangle rectangle) {
+		
+		super(name, rectangle);
 		setDepth(3);
 		// TODO Auto-generated constructor stub
 	}
@@ -36,5 +37,4 @@ public class Friend extends MovingObejectAnim {
 		position.add(velocity.scl(delta));
 	}
 	*/
-	
 }

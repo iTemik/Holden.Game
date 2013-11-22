@@ -1,5 +1,6 @@
 package bar.kisskiss.holden.model.general;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class MovingObject extends InteractObject {
@@ -30,5 +31,12 @@ public class MovingObject extends InteractObject {
 		this.position = new Vector2(0, 0);
 		this.bounds.width = 0;
 		this.bounds.height = 0;
+	}
+	
+	public MovingObject(String name, Rectangle rectangle) {
+		super(name, rectangle);
+	}
+	public MovingObject(String name, Vector2 position, float size) {
+		super(name, position, size);
 	}
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Holden extends MovingObejectAnim {
@@ -30,8 +31,8 @@ public class Holden extends MovingObejectAnim {
 		this.holdenIdle = holdenIdle;
 	}
 
-	public Holden(Vector2 position, float size) {
-		super(position, size);
+	public Holden(String name, Rectangle rectangle) {
+		super(name, rectangle);
 		depth = 1;
 //		this.position = position;
 //		this.bounds.height = size;
@@ -55,7 +56,7 @@ public class Holden extends MovingObejectAnim {
 	}
 
 	@Override
-	public void draw(SpriteBatch sb) {
+	public void draw() {
 		
 		if(state == State.IDLE) {
 			textureRegion = holdenIdle;			
@@ -64,9 +65,12 @@ public class Holden extends MovingObejectAnim {
 			textureRegion = holdenAnimation.getKeyFrame(getStateTime(), true);
 			//super.draw(sb, screenX, screenY, screenWidth, screenHeight);
 		}
-		Sprite sprite = new Sprite(textureRegion);
-		sprite.rotate(facing.angle() - 90);
-		sprite.setBounds( rectOnScreen.x , rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);			
-		sprite.draw(sb);
+		if(spriteBatch != null && textureRegion != null) {
+			Sprite sprite = new Sprite(textureRegion);
+			sprite.rotate(facing.angle() - 90);
+			sprite.setBounds( rectOnScreen.x , rectOnScreen.y, rectOnScreen.width, rectOnScreen.height);			
+			sprite.draw(spriteBatch);	
+		}
+		
 	}
 }

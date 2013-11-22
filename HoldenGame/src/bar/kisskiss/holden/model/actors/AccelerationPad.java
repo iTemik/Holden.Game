@@ -9,7 +9,8 @@ public class AccelerationPad extends InteractObjectAnimation  {
 
 	Vector2 force = new Vector2();
 	
-	public AccelerationPad(Rectangle bounds, Vector2 force) {
+	public AccelerationPad(String name, Rectangle bounds, Vector2 force) {
+		super (name, bounds);
 		setBounds(bounds);
 		this.force = force;
 		setAngle(force.angle());

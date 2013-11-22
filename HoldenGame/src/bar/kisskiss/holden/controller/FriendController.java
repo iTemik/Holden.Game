@@ -111,9 +111,9 @@ public class FriendController {
 			friend.getPosition().y = 0f;			
 			
 		}
-		if (friend.getPosition().y > world.getLevel().getHeight() ) {
+		if (friend.getPosition().y > world.getLevelHeight() ) {
 			friend.getAcceleration().y *= -1; 
-			friend.getPosition().y = world.getLevel().getHeight();
+			friend.getPosition().y = world.getLevelHeight();
 			
 		}
 		
@@ -121,9 +121,9 @@ public class FriendController {
 			friend.getAcceleration().x *= -1; 
 			friend.getPosition().x = 0f;
 		}
-		if (friend.getPosition().x > world.getLevel().getWidth() ) {
+		if (friend.getPosition().x > world.getLevelWidth() ) {
 			friend.getAcceleration().x *= -1; 
-			friend.getPosition().x = world.getLevel().getWidth();			
+			friend.getPosition().x = world.getLevelWidth();			
 		}
 
 	}
@@ -170,15 +170,15 @@ public class FriendController {
 		}
 		
 		//populateCollidableBlocks(startX, startY, endX, endY);
-		populateCollidableBlocks(startX, startY, endX, endY);
 		friendRect.x += friend.getVelocity().x;
 		friendRect.y += friend.getVelocity().y;
-		world.getCollisionRects().clear();
 		
+		//world.getCollisionObjects().clear();
+		Array<InteractObject> collidable = world.getInteractObjectsInRect(new Rectangle(startX, startY, endX, endY));
 		for (InteractObject interactObject : collidable) {
 			if (interactObject == null) continue;			
 			if (friendRect.overlaps(interactObject.getBounds())) {
-				world.getCollisionRects().add(interactObject.getBounds());
+				//world.getCollisionObjects().add(interactObject.getBounds());
 				
 				//friend.getVelocity().scl(DAMP);
 				if(interactObject.getClass() == AccelerationPad.class) {
@@ -190,28 +190,10 @@ public class FriendController {
 					//break;
 			}
 		}
-		if(world.getCollisionRects().size > 0) {
-			//friendRect.x = friend.getPosition().x;
-			//friendRect.y = friend.getPosition().y;
-			//friend.getAcceleration().x *= -1;
-			//friend.getVelocity().scl(-1*DAMP);
-		}
+
 		friend.getPosition().add(friend.getVelocity());
 		friend.getBounds().x = friend.getPosition().x;
 		friend.getBounds().y = friend.getPosition().y;
-		//friend.getVelocity().scl(1 / delta);
 	}
-	/* AK TODO: rework*/
-	private void populateCollidableBlocks(int startX, int startY, int endX,
-			int endY) {
-		collidable.clear();
-		world.getLevel().getBlocksInRect(
-				new Rectangle(startX, startY, endX - startX, endY - startY),
-				collidable);
-
-	}
-
-
-
 	
 }
